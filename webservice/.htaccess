@@ -1,0 +1,6 @@
+# Turn rewrite engine on
+Options +FollowSymlinks
+RewriteEngine On
+
+# map neat URL to internal URL
+RewriteRule ^grad/all$   rest.php?view=svi_gradovi [nc,qsa]
