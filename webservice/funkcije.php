@@ -51,6 +51,61 @@ function sviGradovi() {
     deliver_response($status, $nbr, $message, $gradovi);
 }
 
+function regOstali($email, $lozinka, $oib, $grad, $adresa, $kontakt, $naziv, $tip) {
+    $txt = provjeraKorisnika($email, $lozinka, $oib, $grad, $adresa, $kontakt);
+    $tip_br = "";
+    if (isset($naziv)) {
+        if (empty($naziv)) {
+            $txt.="Niste unjeli naziv. \n";
+        }
+    } else {
+        $txt.="Nedostaje parametar sa nazivom. \n";
+    }
+    if (isset($tip)) {
+        if (empty($tip)) {
+            $txt.="Niste unjeli tip. \n";
+        } else {
+            if ($tip == 'donor') {
+                $tip_br = 1;
+            } else {
+                if ($tip == 'potrebiti') {
+                    $tip_br = 3;
+                } else {
+                    $txt.="Tip nije dobrog formata. \n";
+                }
+            }
+        }
+    } else {
+        $txt.="Nedostaje parametar sa tip. \n";
+    }
+    
+       if ($txt == "") {
+        $sql = "INSERT into korisnik(email,kontakt,tip,OIB,lozinka,grad,adresa) VALUES('$email','$kontakt','$tip_br','$oib','$lozinka','$grad', '$adresa')";
+        dodaj_u_bazu($sql);
+        $sql = "SELECT * FROM korisnik WHERE email='$email'";
+        $rez = vrati_podatke($sql);
+       // echo $rez->num_rows;
+        if ($rez->num_rows > 0) {
+            $id = -1;
+            while ($row = $rez->fetch_assoc()) {
+                $id = $row["id"];
+            }
+            $sql2 = "INSERT into pravna(naziv,id_korisnik) VALUES('$naziv','$id')";
+            dodaj_u_bazu($sql2);
+        } else {
+            $txt.="Došlo je do pogreške pri zapisu u bazu";
+        }
+    }
+    if ($txt == "") {
+       //  array_push($data, );     
+        deliver_response('OK', 0, 'Uspješna registracija',array('reg' => "OK") );
+    } else {
+         //array_push($data, array('reg' => "error"));     
+      
+        deliver_response('NOT OK', 0, $txt, array('reg' => "error") );
+    }
+}
+
 function regVolontera($email, $lozinka, $oib, $grad, $adresa, $kontakt, $ime, $prezime) {
     $txt = provjeraKorisnika($email, $lozinka, $oib, $grad, $adresa, $kontakt);
     if (isset($ime)) {
@@ -73,29 +128,28 @@ function regVolontera($email, $lozinka, $oib, $grad, $adresa, $kontakt, $ime, $p
         dodaj_u_bazu($sql);
         $sql = "SELECT * FROM korisnik WHERE email='$email'";
         $rez = vrati_podatke($sql);
-        echo $rez->num_rows;
+        //echo $rez->num_rows;
         if ($rez->num_rows > 0) {
-            $id=-1;
+            $id = -1;
             while ($row = $rez->fetch_assoc()) {
                 $id = $row["id"];
-            }     
+            }
             $sql2 = "INSERT into fizicka(ime,prezime,id_korisnik) VALUES('$ime','$prezime','$id')";
             dodaj_u_bazu($sql2);
-       
         } else {
             $txt.="Došlo je do pogreške pri zapisu u bazu";
         }
     }
 
-     
-    if($txt==""){
-        deliver_response('OK', 0, 'Uspješna registracija', array('reg' => "OK"));
-       
-    }else{
-       deliver_response('NOT OK', 0, $txt, array('reg' => "error"))  ; 
-     
+
+    if ($txt == "") {
+        // array_push($data, array('reg' => "OK"));     
+        deliver_response('OK', 0, 'Uspješna registracija',array('reg' => "OK") );
+    } else {
+        // array_push($data, array('reg' => "error"));     
+      
+        deliver_response('NOT OK', 0, $txt, array('reg' => "error") );
     }
-   
 }
 
 function provjeraKorisnika($email, $lozinka, $oib, $grad, $adresa, $kontakt) {
@@ -104,7 +158,7 @@ function provjeraKorisnika($email, $lozinka, $oib, $grad, $adresa, $kontakt) {
         if (empty($email)) {
             $tekst.="Niste unjeli email. \n";
         } else {
-             
+
             $sql = "SELECT * FROM korisnik WHERE email='$email'";
             $rez = vrati_podatke($sql);
             if ($rez->num_rows > 0) {
