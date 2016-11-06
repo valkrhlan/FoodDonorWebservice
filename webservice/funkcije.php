@@ -51,6 +51,46 @@ function sviGradovi() {
     deliver_response($status, $nbr, $message, $gradovi);
 }
 
+function prijava($email, $lozinka) {
+    $tekst = "";
+    if (isset($email)) {
+        if (empty($email)) {
+            $tekst.="Niste unjeli email. \n";
+        } else {
+            
+        }
+    } else {
+        $tekst.="Nedostaje parametar sa emailom. \n";
+    }
+    if (isset($lozinka)) {
+        if (empty($lozinka)) {
+            $tekst.="Niste unjeli lozinku. \n";
+        }
+    } else {
+        $tekst.="Nedostaje parametar sa lozinkom. \n";
+    }
+    if (!empty($email) && !empty($lozinka)) {
+        $sql = "SELECT * FROM korisnik WHERE email='$email'";
+        $rez = vrati_podatke($sql);
+        if ($rez->num_rows < 1) {
+            $tekst.="Korisnik ne postoji u bazi. \n";
+        } else {
+            $lozinkaBaza = "";
+            while ($row = $rez->fetch_assoc()) {
+                $lozinkaBaza = $row["lozinka"];
+            }
+            if($lozinka!=$lozinkaBaza){
+                $tekst.="Lozinke se ne podudaraju. /n";
+            }
+         }
+    }
+    if ($tekst == "") {
+       deliver_response('OK', 0, 'Uspješna prijava', array('prijava' => "OK"));
+    } else {
+        deliver_response('NOT OK', 0, $tekst, array('prijava' => "error"));
+    }
+}
+
 function regOstali($email, $lozinka, $oib, $grad, $adresa, $kontakt, $naziv, $tip) {
     $txt = provjeraKorisnika($email, $lozinka, $oib, $grad, $adresa, $kontakt);
     $tip_br = "";
@@ -78,13 +118,13 @@ function regOstali($email, $lozinka, $oib, $grad, $adresa, $kontakt, $naziv, $ti
     } else {
         $txt.="Nedostaje parametar sa tip. \n";
     }
-    
-       if ($txt == "") {
+
+    if ($txt == "") {
         $sql = "INSERT into korisnik(email,kontakt,tip,OIB,lozinka,grad,adresa) VALUES('$email','$kontakt','$tip_br','$oib','$lozinka','$grad', '$adresa')";
         dodaj_u_bazu($sql);
         $sql = "SELECT * FROM korisnik WHERE email='$email'";
         $rez = vrati_podatke($sql);
-       // echo $rez->num_rows;
+        // echo $rez->num_rows;
         if ($rez->num_rows > 0) {
             $id = -1;
             while ($row = $rez->fetch_assoc()) {
@@ -97,12 +137,12 @@ function regOstali($email, $lozinka, $oib, $grad, $adresa, $kontakt, $naziv, $ti
         }
     }
     if ($txt == "") {
-       //  array_push($data, );     
-        deliver_response('OK', 0, 'Uspješna registracija',array('reg' => "OK") );
+        //  array_push($data, );     
+        deliver_response('OK', 0, 'Uspješna registracija', array('reg' => "OK"));
     } else {
-         //array_push($data, array('reg' => "error"));     
-      
-        deliver_response('NOT OK', 0, $txt, array('reg' => "error") );
+        //array_push($data, array('reg' => "error"));     
+
+        deliver_response('NOT OK', 0, $txt, array('reg' => "error"));
     }
 }
 
@@ -144,11 +184,11 @@ function regVolontera($email, $lozinka, $oib, $grad, $adresa, $kontakt, $ime, $p
 
     if ($txt == "") {
         // array_push($data, array('reg' => "OK"));     
-        deliver_response('OK', 0, 'Uspješna registracija',array('reg' => "OK") );
+        deliver_response('OK', 0, 'Uspješna registracija', array('reg' => "OK"));
     } else {
         // array_push($data, array('reg' => "error"));     
-      
-        deliver_response('NOT OK', 0, $txt, array('reg' => "error") );
+
+        deliver_response('NOT OK', 0, $txt, array('reg' => "error"));
     }
 }
 
