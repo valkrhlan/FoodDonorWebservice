@@ -1,2 +1,2 @@
 <?php
-echo "Početna stranica";
+phpinfo();
