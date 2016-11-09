@@ -53,6 +53,7 @@ function sviGradovi() {
 
 function prijava($email, $lozinka) {
     $tekst = "";
+    $tip=0;
     if (isset($email)) {
         if (empty($email)) {
             $tekst.="Niste unjeli email. \n";
@@ -78,6 +79,7 @@ function prijava($email, $lozinka) {
             $lozinkaBaza = "";
             while ($row = $rez->fetch_assoc()) {
                 $lozinkaBaza = $row["lozinka"];
+                $tip=$row["tip"];
             }
             if($lozinka!=$lozinkaBaza){
                 $tekst.="Lozinke se ne podudaraju. /n";
@@ -85,7 +87,13 @@ function prijava($email, $lozinka) {
          }
     }
     if ($tekst == "") {
-       deliver_response('OK', 0, 'Uspješna prijava', array('prijava' => "OK"));
+        if($tip!=0){
+            deliver_response('OK', $tip, 'Uspješna prijava', array('prijava' => "OK"));
+        }else{
+            deliver_response('OK', 0, 'Došlo je do problema na webservisu.', array('prijava' => "error")); 
+        }
+        
+      
     } else {
         deliver_response('NOT OK', 0, $tekst, array('prijava' => "error"));
     }
