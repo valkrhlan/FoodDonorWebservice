@@ -3,11 +3,12 @@
 class baza {
 
     const server = "localhost";
-    const korisnik = "id156228_root";
-    const lozinka = "tutifruti";
-    const baza = "id156228_air";
-     //const lozinka = "";
-    //const korisnik = "root";
+   // const korisnik = "id156228_root";
+    //const lozinka = "tutifruti";
+  //  const baza = "id156228_air";
+  const baza = "fooddonor";
+    const lozinka = "";
+    const korisnik = "root";
 
     private $veza = null;
     private $greska = '';
