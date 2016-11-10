@@ -21,11 +21,12 @@ function vrati_podatke($upit) {
 }
 
 function deliver_response($status, $nbr, $message, $data) {
+    //print_r($data);
     $response['status'] = $status;
     $response['nbResults'] = $nbr;
     $response['message'] = $message;
-    $response['data'] = $data;
-
+    $response['data'] = json_encode($data);
+    
     $json_response = json_encode($response);
     echo $json_response;
 }
@@ -88,9 +89,9 @@ function prijava($email, $lozinka) {
     }
     if ($tekst == "") {
         if($tip!=0){
-            deliver_response('OK', $tip, 'Uspješna prijava', array('prijava' => "OK"));
+            deliver_response('OK', $tip, 'Uspješna prijava', json_encode(array('prijava' => "OK")));
         }else{
-            deliver_response('OK', 0, 'Došlo je do problema na webservisu.', array('prijava' => "error")); 
+            deliver_response('OK', 0, 'Došlo je do problema na webservisu.', json_encode(array('prijava' => "error"))); 
         }
         
       
