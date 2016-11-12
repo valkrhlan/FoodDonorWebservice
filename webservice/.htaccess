@@ -4,6 +4,6 @@ RewriteEngine On
 
 # map neat URL to internal URL
 RewriteRule ^grad/all$   rest.php?view=svi_gradovi [nc,qsa]
-RewriteRule ^registracija/([a-zA-Z]+)/(.*)/(.*)/([0-9]+)/([a-zA-Z0-9]+)/(.*)/([a-zA-Z0-9]+)/(.*)/(.*)/$ rest.php?metoda=$1&email=$2&lozinka=$3&oib=$4&grad=$5&adresa=$6&kontakt=7$&ime=$8&prezime=$9 [nc,qsa]
-RewriteRule ^registracijaOstali/([a-zA-Z]+)/(.*)/(.*)/([0-9]+)/([a-zA-Z0-9]+)/(.*)/([a-zA-Z0-9]+)/(.*)/([a-zA-Z]+)/$ rest.php?metoda=$1&email=$2&lozinka=$3&oib=$4&grad=$5&adresa=$6&kontakt=7$&naziv=$8&tip=$9 [nc,qsa]
+RewriteRule ^registracija/([a-zA-Z]+)/(.*)/(.*)/([0-9]+)/(.*)/(.*)/([a-zA-Z0-9]+)/(.*)/(.*)/$ rest.php?metoda=$1&email=$2&lozinka=$3&oib=$4&grad=$5&adresa=$6&kontakt=$7&ime=$8&prezime=$9 [nc,qsa]
+RewriteRule ^registracijaOstali/([a-zA-Z]+)/(.*)/(.*)/([0-9]+)/(.*)/(.*)/([a-zA-Z0-9]+)/(.*)/([a-zA-Z]+)/$ rest.php?metoda=$1&email=$2&lozinka=$3&oib=$4&grad=$5&adresa=$6&kontakt=$7&naziv=$8&tip=$9 [nc,qsa]
 RewriteRule ^([a-zA-Z]+)/(.*)/(.*)/$   rest.php?metoda=$1&email=$2&lozinka=$3 [nc,qsa]
