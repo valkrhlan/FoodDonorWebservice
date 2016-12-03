@@ -262,7 +262,7 @@ function dohvati_vrste_i_jedinice(){
     $vrsta = array();
     $jedinica = array();
     $status = "OK";
-    $message = "Pronađeni su Rezultati!";
+    $message = "Pronađeni su rezultati!";
     $sql = "SELECT * FROM vrsta";
     $rez = vrati_podatke($sql);
     if ($rez->num_rows > 0) {
