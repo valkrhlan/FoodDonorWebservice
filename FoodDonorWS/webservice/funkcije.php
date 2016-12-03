@@ -254,3 +254,42 @@ function provjeraKorisnika($email, $lozinka, $oib, $grad, $adresa, $kontakt) {
 
     return $tekst;
 }
+
+function dohvati_vrste_i_jedinice(){
+   
+    $nbr = 0;
+    $polje = array();
+    $vrsta = array();
+    $jedinica = array();
+    $status = "OK";
+    $message = "Pronađeni su Rezultati!";
+    $sql = "SELECT * FROM vrsta";
+    $rez = vrati_podatke($sql);
+    if ($rez->num_rows > 0) {
+        while ($row = $rez->fetch_assoc()) {
+            $pom = array('id' => $row["id"], 'naziv' => $row["naziv"]);
+            array_push($vrsta, $pom);
+            $nbr++;
+        }
+    } else {
+        $pom = array('id' => "-1", 'naziv' => "");
+        array_push($vrsta, $pom);
+        $message = "Nema zapisa u bazi!";
+    }
+    $sql = "SELECT * FROM jedinica";
+    $rez = vrati_podatke($sql);
+    if ($rez->num_rows > 0) {
+        while ($row = $rez->fetch_assoc()) {
+            $pom2 = array('id' => $row["id"], 'naziv' => $row["naziv"]);
+            array_push($jedinica, $pom2);
+            $nbr++;
+        }
+    } else {
+        $pom2 = array('id' => "-1", 'naziv' => "");
+        array_push($jedinica, $pom2);
+        $message = "Nema zapisa u bazi!";
+    }
+    $pom3=array('vrsta' => $vrsta, 'jedinica' => $jedinica);
+    array_push($polje, $pom3);
+    deliver_response($status, $nbr, $message, $polje);
+}
