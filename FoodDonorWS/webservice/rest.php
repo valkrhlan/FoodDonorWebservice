@@ -10,6 +10,9 @@ if (isset($_GET)) {
         if ($_GET["view"] == 'svi_gradovi') {
             sviGradovi();
         }
+         if ($_GET["view"] == 'vrsta_jedinica') {
+            dohvati_vrste_i_jedinice();
+        }
     }
     if (!empty($_GET["metoda"])) {
         if ($_GET["metoda"] == 'prijava') {
