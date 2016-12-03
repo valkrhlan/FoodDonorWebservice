@@ -268,8 +268,7 @@ function dohvati_vrste_i_jedinice(){
     if ($rez->num_rows > 0) {
         while ($row = $rez->fetch_assoc()) {
             $pom = array('id' => $row["id"], 'naziv' => $row["naziv"]);
-            array_push($vrsta, $pom);
-            $nbr++;
+            array_push($vrsta, $pom);       
         }
     } else {
         $pom = array('id' => "-1", 'naziv' => "");
@@ -282,7 +281,6 @@ function dohvati_vrste_i_jedinice(){
         while ($row = $rez->fetch_assoc()) {
             $pom2 = array('id' => $row["id"], 'naziv' => $row["naziv"]);
             array_push($jedinica, $pom2);
-            $nbr++;
         }
     } else {
         $pom2 = array('id' => "-1", 'naziv' => "");
