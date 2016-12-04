@@ -268,12 +268,14 @@ function dohvati_vrste_i_jedinice(){
     if ($rez->num_rows > 0) {
         while ($row = $rez->fetch_assoc()) {
             $pom = array('id' => $row["id"], 'naziv' => $row["naziv"]);
-            array_push($vrsta, $pom);       
+           array_push($vrsta, $pom);      
+            
         }
     } else {
         $pom = array('id' => "-1", 'naziv' => "");
         array_push($vrsta, $pom);
         $message = "Nema zapisa u bazi!";
+        
     }
     $sql = "SELECT * FROM jedinica";
     $rez = vrati_podatke($sql);
@@ -281,13 +283,14 @@ function dohvati_vrste_i_jedinice(){
         while ($row = $rez->fetch_assoc()) {
             $pom2 = array('id' => $row["id"], 'naziv' => $row["naziv"]);
             array_push($jedinica, $pom2);
+            
         }
     } else {
         $pom2 = array('id' => "-1", 'naziv' => "");
         array_push($jedinica, $pom2);
         $message = "Nema zapisa u bazi!";
     }
-    $pom3=array('vrsta' => $vrsta, 'jedinica' => $jedinica);
-    array_push($polje, $pom3);
+    $polje=array('vrsta' => $vrsta, 'jedinica' => $jedinica);
+    //array_push($polje, $pom3);
     deliver_response($status, $nbr, $message, $polje);
 }
