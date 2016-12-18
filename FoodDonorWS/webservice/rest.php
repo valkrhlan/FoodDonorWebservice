@@ -36,6 +36,12 @@ if (isset($_GET)) {
            dodajNoviPaket($korisnik,$json);
            
         }
+        if($_GET["metoda"] == 'dohvati') {
+            $korisnik=$_GET["korisnik"];
+           
+           dohvatiPakete($korisnik);
+           
+        }
     }
 }
 

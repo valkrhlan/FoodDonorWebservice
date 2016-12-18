@@ -98,8 +98,8 @@ function prijava($email, $lozinka) {
     }
 }
 
-function regOstali($email, $lozinka, $oib, $grad, $adresa, $kontakt, $naziv, $tip,$ime,$prezime) {
-    $txt = provjeraKorisnika($email, $lozinka, $oib, $grad, $adresa, $kontakt,$ime,$prezime);
+function regOstali($email, $lozinka, $oib, $grad, $adresa, $kontakt, $naziv, $tip, $ime, $prezime) {
+    $txt = provjeraKorisnika($email, $lozinka, $oib, $grad, $adresa, $kontakt, $ime, $prezime);
     $tip_br = "";
     if (isset($naziv)) {
         if (empty($naziv)) {
@@ -146,23 +146,22 @@ function regOstali($email, $lozinka, $oib, $grad, $adresa, $kontakt, $naziv, $ti
     if ($txt == "") {
         deliver_response('OK', 0, 'Uspješna registracija', array('reg' => "OK"));
     } else {
-         deliver_response('NOT OK', 0, $txt, array('reg' => "error"));
+        deliver_response('NOT OK', 0, $txt, array('reg' => "error"));
     }
 }
 
 function regVolontera($email, $lozinka, $oib, $grad, $adresa, $kontakt, $ime, $prezime) {
-    $txt = provjeraKorisnika($email, $lozinka, $oib, $grad, $adresa, $kontakt,$ime,$prezime);
+    $txt = provjeraKorisnika($email, $lozinka, $oib, $grad, $adresa, $kontakt, $ime, $prezime);
 
     if ($txt == "") {
         $sql = "INSERT into korisnik(email,kontakt,tip,OIB,lozinka,grad,adresa,ime,prezime) VALUES('$email','$kontakt',2,'$oib','$lozinka','$grad', '$adresa','$ime','$prezime')";
         dodaj_u_bazu($sql);
         $sql = "SELECT * FROM korisnik WHERE email='$email'";
         $rez = vrati_podatke($sql);
-       
+
         if ($rez->num_rows < 1) {
-          $txt .= "Došlo je do pogreške pri zapisu u bazu";
-        } 
-      
+            $txt .= "Došlo je do pogreške pri zapisu u bazu";
+        }
     }
 
 
@@ -176,7 +175,7 @@ function regVolontera($email, $lozinka, $oib, $grad, $adresa, $kontakt, $ime, $p
     }
 }
 
-function provjeraKorisnika($email, $lozinka, $oib, $grad, $adresa, $kontakt,$ime,$prezime) {
+function provjeraKorisnika($email, $lozinka, $oib, $grad, $adresa, $kontakt, $ime, $prezime) {
     $tekst = "";
     if (isset($email)) {
         if (empty($email)) {
@@ -243,7 +242,7 @@ function provjeraKorisnika($email, $lozinka, $oib, $grad, $adresa, $kontakt,$ime
     } else {
         $tekst .= "Nedostaje parametar sa prezimenom. \n";
     }
-    
+
     return $tekst;
 }
 
@@ -306,7 +305,7 @@ function dodaj_bazu_vrai_id($upit) {
 
 function dodajNoviPaket($korisnik, $json) {
     $tekst = "";
-    
+
     $sql = "SELECT id FROM korisnik WHERE email='$korisnik'";
     $rez = vrati_podatke($sql);
     $donor = "";
@@ -320,6 +319,7 @@ function dodajNoviPaket($korisnik, $json) {
         $status = dodaj_bazu_vrai_id($sql2);
         if ($status == -1) {
             $tekst .= "Greška pri spajanju na bazu";
+            
         } else {
             $sql3 = "INSERT INTO paketi(status,id_donor) values('$status','$donor')";
             // echo $sql3;
@@ -329,7 +329,7 @@ function dodajNoviPaket($korisnik, $json) {
                 $tekst .= "Greška pri spajanju na bazu";
             } else {
                 $stavke = json_decode($json, true);
-               
+
                 foreach ($stavke as $stavka) {
                     $jedinica = $stavka["jedinica"]["id"];
                     $kol = $stavka["kolicina"];
@@ -356,6 +356,52 @@ function dodajNoviPaket($korisnik, $json) {
 
         deliver_response('NOT OK', 0, $tekst, array('dodavanje' => "error"));
     }
-     
-     
+}
+
+function dohvatiPakete($korisnik) {
+    $txt = "";
+
+    $sql = "SELECT tip FROM korisnik WHERE email='$korisnik'";
+    $rez = vrati_podatke($sql);
+    $popis_paketa;
+    $br_paketa = 0;
+    if ($rez->num_rows > 0) {
+        $tip = -1;
+        while ($row = $rez->fetch_assoc()) {
+            $tip = $row["tip"];
+        }
+        //1 donor
+        //2 volonter
+        //3 potrebiti
+        if ($tip == 1) {
+            //to do
+            print_r("tip 1");
+            $sql2 = "SELECT * FROM paketi";
+        } else {
+            if ($tip == 2) {
+                print_r("tip 2");
+                $sql2 = "SELECT * FROM paketi p JOIN status s on p.status=s.id WHERE id_donor!=NULL AND id_potrebitog IS NOT NULL AND  id_volonter IS NULL";
+            } else {
+                print_r("tip 3");
+                $sql2 = "SELECT * FROM paketi p JOIN status s on p.status=s.id WHERE id_donor IS NOT NULL AND id_potrebitog IS NULL"; //id potr i id volon
+            }
+        }
+        $rez = vrati_podatke($sql2);
+        if ($rez->num_rows > 0) {
+            while ($row = $rez->fetch_assoc()) {
+                //$tip = $row["tip"];
+                $br_paketa++;
+                print_r($row);
+                print_r($br_paketa);
+            }
+        } else {
+            $txt .= "Nema paketa za traženog korisnika";
+        }
+    } else {
+        $txt .= "Korisnik ne postoji u bazi";
+    }
+
+    if ($txt != "") {
+        deliver_response('NOT OK', 0, $txt, array('paketi' => "error"));
+    }
 }
