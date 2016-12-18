@@ -21,7 +21,9 @@ if (isset($_GET)) {
             prijava($_GET["email"], $_GET["lozinka"]);
         }
         if ($_GET["metoda"] == 'registracijaOstali') {         
-            regOstali($_GET["email"], $_GET["lozinka"], $_GET["oib"], $_GET["grad"], $_GET["adresa"], $_GET["kontakt"], $_GET["naziv"], $_GET["tip"]);
+                 
+            $nazivi= explode("_",$_GET["naziv"]);
+            regOstali($_GET["email"], $_GET["lozinka"], $_GET["oib"], $_GET["grad"], $_GET["adresa"], $_GET["kontakt"], $nazivi[0], $_GET["tip"],$nazivi[1],$nazivi[2]);
         }
         if ($_GET["metoda"] == 'registracijaVolontera') {
             regVolontera($_GET["email"], $_GET["lozinka"], $_GET["oib"], $_GET["grad"], $_GET["adresa"], $_GET["kontakt"], $_GET["ime"], $_GET["prezime"]);
