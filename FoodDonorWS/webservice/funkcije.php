@@ -171,21 +171,15 @@ function regVolontera($email, $lozinka, $oib, $grad, $adresa, $kontakt, $ime, $p
     }
 
     if ($txt == "") {
-        $sql = "INSERT into korisnik(email,kontakt,tip,OIB,lozinka,grad,adresa) VALUES('$email','$kontakt',2,'$oib','$lozinka','$grad', '$adresa')";
+        $sql = "INSERT into korisnik(email,kontakt,tip,OIB,lozinka,grad,adresa,ime,prezime) VALUES('$email','$kontakt',2,'$oib','$lozinka','$grad', '$adresa','$ime','$prezime')";
         dodaj_u_bazu($sql);
         $sql = "SELECT * FROM korisnik WHERE email='$email'";
         $rez = vrati_podatke($sql);
-        //echo $rez->num_rows;
-        if ($rez->num_rows > 0) {
-            $id = -1;
-            while ($row = $rez->fetch_assoc()) {
-                $id = $row["id"];
-            }
-            $sql2 = "INSERT into fizicka(ime,prezime,id_korisnik) VALUES('$ime','$prezime','$id')";
-            dodaj_u_bazu($sql2);
-        } else {
-            $txt .= "Došlo je do pogreške pri zapisu u bazu";
-        }
+       
+        if ($rez->num_rows < 1) {
+          $txt .= "Došlo je do pogreške pri zapisu u bazu";
+        } 
+      
     }
 
 

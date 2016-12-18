@@ -20,7 +20,7 @@ if (isset($_GET)) {
         if ($_GET["metoda"] == 'prijava') {
             prijava($_GET["email"], $_GET["lozinka"]);
         }
-        if ($_GET["metoda"] == 'registracijaOstali') {          
+        if ($_GET["metoda"] == 'registracijaOstali') {         
             regOstali($_GET["email"], $_GET["lozinka"], $_GET["oib"], $_GET["grad"], $_GET["adresa"], $_GET["kontakt"], $_GET["naziv"], $_GET["tip"]);
         }
         if ($_GET["metoda"] == 'registracijaVolontera') {
