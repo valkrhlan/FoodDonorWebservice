@@ -98,8 +98,8 @@ function prijava($email, $lozinka) {
     }
 }
 
-function regOstali($email, $lozinka, $oib, $grad, $adresa, $kontakt, $naziv, $tip) {
-    $txt = provjeraKorisnika($email, $lozinka, $oib, $grad, $adresa, $kontakt);
+function regOstali($email, $lozinka, $oib, $grad, $adresa, $kontakt, $naziv, $tip,$ime,$prezime) {
+    $txt = provjeraKorisnika($email, $lozinka, $oib, $grad, $adresa, $kontakt,$ime,$prezime);
     $tip_br = "";
     if (isset($naziv)) {
         if (empty($naziv)) {
@@ -127,7 +127,7 @@ function regOstali($email, $lozinka, $oib, $grad, $adresa, $kontakt, $naziv, $ti
     }
 
     if ($txt == "") {
-        $sql = "INSERT into korisnik(email,kontakt,tip,OIB,lozinka,grad,adresa) VALUES('$email','$kontakt','$tip_br','$oib','$lozinka','$grad', '$adresa')";
+        $sql = "INSERT into korisnik(email,kontakt,tip,OIB,lozinka,grad,adresa,ime,prezime) VALUES('$email','$kontakt','$tip_br','$oib','$lozinka','$grad', '$adresa','$ime','$prezime')";
         dodaj_u_bazu($sql);
         $sql = "SELECT * FROM korisnik WHERE email='$email'";
         $rez = vrati_podatke($sql);
@@ -144,31 +144,14 @@ function regOstali($email, $lozinka, $oib, $grad, $adresa, $kontakt, $naziv, $ti
         }
     }
     if ($txt == "") {
-        //  array_push($data, );     
         deliver_response('OK', 0, 'Uspješna registracija', array('reg' => "OK"));
     } else {
-        //array_push($data, array('reg' => "error"));     
-
-        deliver_response('NOT OK', 0, $txt, array('reg' => "error"));
+         deliver_response('NOT OK', 0, $txt, array('reg' => "error"));
     }
 }
 
 function regVolontera($email, $lozinka, $oib, $grad, $adresa, $kontakt, $ime, $prezime) {
-    $txt = provjeraKorisnika($email, $lozinka, $oib, $grad, $adresa, $kontakt);
-    if (isset($ime)) {
-        if (empty($ime)) {
-            $txt .= "Niste unjeli ime. \n";
-        }
-    } else {
-        $txt .= "Nedostaje parametar sa imenom. \n";
-    }
-    if (isset($prezime)) {
-        if (empty($prezime)) {
-            $txt .= "Niste unjeli prezime. \n";
-        }
-    } else {
-        $txt .= "Nedostaje parametar sa prezimenom. \n";
-    }
+    $txt = provjeraKorisnika($email, $lozinka, $oib, $grad, $adresa, $kontakt,$ime,$prezime);
 
     if ($txt == "") {
         $sql = "INSERT into korisnik(email,kontakt,tip,OIB,lozinka,grad,adresa,ime,prezime) VALUES('$email','$kontakt',2,'$oib','$lozinka','$grad', '$adresa','$ime','$prezime')";
@@ -193,7 +176,7 @@ function regVolontera($email, $lozinka, $oib, $grad, $adresa, $kontakt, $ime, $p
     }
 }
 
-function provjeraKorisnika($email, $lozinka, $oib, $grad, $adresa, $kontakt) {
+function provjeraKorisnika($email, $lozinka, $oib, $grad, $adresa, $kontakt,$ime,$prezime) {
     $tekst = "";
     if (isset($email)) {
         if (empty($email)) {
@@ -246,6 +229,21 @@ function provjeraKorisnika($email, $lozinka, $oib, $grad, $adresa, $kontakt) {
         $tekst .= "Nedostaje parametar sa kontakt informacijama. \n";
     }
 
+    if (isset($ime)) {
+        if (empty($ime)) {
+            $tekst .= "Niste unjeli ime. \n";
+        }
+    } else {
+        $tekst .= "Nedostaje parametar sa imenom. \n";
+    }
+    if (isset($prezime)) {
+        if (empty($prezime)) {
+            $tekst .= "Niste unjeli prezime. \n";
+        }
+    } else {
+        $tekst .= "Nedostaje parametar sa prezimenom. \n";
+    }
+    
     return $tekst;
 }
 
