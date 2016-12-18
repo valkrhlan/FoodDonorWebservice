@@ -137,7 +137,7 @@ function regOstali($email, $lozinka, $oib, $grad, $adresa, $kontakt, $naziv, $ti
             while ($row = $rez->fetch_assoc()) {
                 $id = $row["id"];
             }
-            $sql2 = "INSERT into pravna(naziv,id_korisnik) VALUES('$naziv','$id')";
+            $sql2 = "INSERT into detalji_pravna(naziv,id_korisnik) VALUES('$naziv','$id')";
             dodaj_u_bazu($sql2);
         } else {
             $txt .= "Došlo je do pogreške pri zapisu u bazu";
@@ -314,6 +314,7 @@ function dodaj_bazu_vrai_id($upit) {
 
 function dodajNoviPaket($korisnik, $json) {
     $tekst = "";
+    
     $sql = "SELECT id FROM korisnik WHERE email='$korisnik'";
     $rez = vrati_podatke($sql);
     $donor = "";
@@ -336,7 +337,7 @@ function dodajNoviPaket($korisnik, $json) {
                 $tekst .= "Greška pri spajanju na bazu";
             } else {
                 $stavke = json_decode($json, true);
-             
+               
                 foreach ($stavke as $stavka) {
                     $jedinica = $stavka["jedinica"]["id"];
                     $kol = $stavka["kolicina"];
@@ -363,4 +364,6 @@ function dodajNoviPaket($korisnik, $json) {
 
         deliver_response('NOT OK', 0, $tekst, array('dodavanje' => "error"));
     }
+     
+     
 }
