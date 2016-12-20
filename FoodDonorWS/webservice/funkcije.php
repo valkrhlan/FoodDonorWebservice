@@ -391,21 +391,23 @@ function dohvatiPakete($korisnik) {
                 
                 $br_paketa++;
                 $id_paketa=$row["id"];
-                $sql3="SELECT * FROM stavka s JOIN stavka_paket sp ON s.id=sp.id_stavka WHERE sp.id_paket='$id_paketa'";              
+                $sql3="SELECT s.id,s.naziv,s.kolicina,s.vrsta,v.naziv,s.jedinica,j.naziv FROM stavka s JOIN stavka_paket sp ON s.id=sp.id_stavka JOIN vrsta v on s.vrsta=v.id JOIN jedinica j ON s.jedinica=j.id WHERE sp.id_paket='$id_paketa'";              
                 $rez3 = vrati_podatke($sql3);             
                 $stavka = array();
                 if ($rez3->num_rows > 0) {
-                 while ($row3 = $rez3->fetch_assoc()) {               
-                      $pom2 = array('id' => $row3["id"], 'naziv' => $row3["naziv"],'kolicina' => $row3["kolicina"], 'jedinica' => $row3["jedinica"],'id_stavka' => $row3["id_stavka"],'id_paket' => $row3["id_paket"],'stanje' => $row3["stanje"]);                   
+                 
+                 while ($row3 = $rez3->fetch_array()) {               
+                    // print_r($row3);
+                     $pom2 = array('id' => $row3[0], 'naziv' => $row3[1],'kolicina' => $row3[2], 'id_vrsta' => $row3[3],'vrsta' => $row3[4],'id_jedinica' => $row3[5],'jedinica' => $row3[6]);                   
                       array_push($stavka, $pom2);
+                     
                  }
                    
                }
                $paket=array('id'=> $row["id"],'preuzimanje'=> $row["preuzimanje"],'hitno'=> $row["hitno"],'id_volonter'=> $row["id_volonter"],'id_donor'=> $row["id_donor"],'id_potrebitog'=> $row["id_potrebitog"],'preuzimanje'=> $row["preuzimanje"],'v_kreiranja'=> $row["v_kreiranja"],'v_naruceno'=> $row["v_naruceno"],'v_naruceno'=> $row["v_naruceno"],'v_preuzeto'=> $row["v_preuzeto"],'v_slanja'=> $row["v_slanja"],'v_pristiglo'=> $row["v_pristiglo"],'stavke'=>$stavka);      
                array_push($paketi, $paket);
             }
-            //print_r("paketi:");
-            //print_r($paketi);
+            
         } else {
             $txt .= "Nema paketa za traženog korisnika";
         }
