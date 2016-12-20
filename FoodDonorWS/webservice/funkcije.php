@@ -286,6 +286,7 @@ function dohvati_vrste_i_jedinice() {
 function dodaj_bazu_vrai_id($upit) {
     $db = new baza;
     $con = mysqli_connect("localhost", "root", "", "id156228_air");
+    
     if (!$con) {
         return -1;
     } else {
@@ -304,8 +305,68 @@ function dodaj_bazu_vrai_id($upit) {
 }
 
 function dodajNoviPaket($korisnik, $json) {
-    $tekst = "";
+    /*$tekst = "";
+    //print_r($json);
+    //echo "\n";
+    $pom = substr($json, 1, strlen($json)-2);
+   // print_r($pom);
+    //echo "\n";
+    $sql = "SELECT id FROM korisnik WHERE email='$korisnik'";
+    $rez = vrati_podatke($sql);
+    $donor = "";
+    if ($rez->num_rows > 0) {
+        while ($row = $rez->fetch_assoc()) {
+            $donor = $row["id"];
+        }
 
+        $date = date("Y-m-d H:i:s");
+        $sql2 = "INSERT INTO status(v_kreiranja) VALUES('$date')";
+        $status = dodaj_bazu_vrai_id($sql2);
+        if ($status == -1) {
+            $tekst .= "Greška pri spajanju na bazu";
+            
+        } else {
+            $sql3 = "INSERT INTO paketi(status,id_donor) values('$status','$donor')";
+            // echo $sql3;
+            $paket = dodaj_bazu_vrai_id($sql3);
+            // echo $paket;
+            if ($paket == -1) {
+                $tekst .= "Greška pri spajanju na bazu";
+            } else {
+                //print_r($stavke);
+                $stavke = json_decode($pom, true);
+                print_r($stavke);
+                foreach ($stavke as $stavka) {
+                    print_r($stavka);
+                    $jedinica = $stavka["jedinica"]["id"];
+                    $kol = $stavka["kolicina"];
+                    $naz = $stavka["naziv"];
+                    $vrsta = $stavka["vrsta"]["id"];
+                    echo($jedinica. "   naz  ".$naz."  \n");
+                    $sql = "INSERT INTO stavka(naziv,kolicina,jedinica,vrsta) VALUES('$naz','$kol','$jedinica','$vrsta')";
+                    $stavka_id = dodaj_bazu_vrai_id($sql);
+                    if ($stavka_id != -1) {
+                        $sql2 = "INSERT INTO stavka_paket(id_stavka,id_paket) VALUES('$stavka_id','$paket')";
+                        dodaj_u_bazu($sql2);
+                    }
+                }
+            }
+        }
+        // echo $status;
+    } else {
+        $tekst .= "Korisnik ne postoji  bazi.";
+    }
+    if ($tekst == "") {
+
+        deliver_response('OK', 0, 'Uspješno dodano!', array('dodavanje' => "OK"));
+    } else {
+        // array_push($data, array('reg' => "error"));     
+
+        deliver_response('NOT OK', 0, $tekst, array('dodavanje' => "error"));
+    }*/
+    
+       $tekst = "";
+     $pom = substr($json, 1, strlen($json)-2);
     $sql = "SELECT id FROM korisnik WHERE email='$korisnik'";
     $rez = vrati_podatke($sql);
     $donor = "";
@@ -329,12 +390,13 @@ function dodajNoviPaket($korisnik, $json) {
                 $tekst .= "Greška pri spajanju na bazu";
             } else {
                 $stavke = json_decode($json, true);
-
+                
                 foreach ($stavke as $stavka) {
                     $jedinica = $stavka["jedinica"]["id"];
                     $kol = $stavka["kolicina"];
                     $naz = $stavka["naziv"];
                     $vrsta = $stavka["vrsta"]["id"];
+
                     $sql = "INSERT INTO stavka(naziv,kolicina,jedinica,vrsta) VALUES('$naz','$kol','$jedinica','$vrsta')";
                     $stavka_id = dodaj_bazu_vrai_id($sql);
                     if ($stavka_id != -1) {
@@ -351,10 +413,12 @@ function dodajNoviPaket($korisnik, $json) {
     if ($tekst == "") {
 
         deliver_response('OK', 0, 'Uspješno dodano!', array('dodavanje' => "OK"));
+        //deliver_response('OK', 0, $pom, array('dodavanje' => "OK"));
     } else {
         // array_push($data, array('reg' => "error"));     
 
         deliver_response('NOT OK', 0, $tekst, array('dodavanje' => "error"));
+         // deliver_response('NOT OK', 0, $tekst, array('dodavanje' => $pom));
     }
 }
 
