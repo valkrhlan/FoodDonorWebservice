@@ -45,8 +45,3 @@ if (isset($_GET)) {
     }
 }
 
-
- 
-
-
-//RewriteRule ^registracija/fizicka/([a-zA-Z]+)/([a-zA-Z]+)/([^]]+) rest.php?ime=$1&prezime=$2&email=$3 [nc,qsa]

@@ -373,27 +373,39 @@ function dohvatiPakete($korisnik) {
         //1 donor
         //2 volonter
         //3 potrebiti
-        if ($tip == 1) {
-            //to do
-            print_r("tip 1");
-            $sql2 = "SELECT * FROM paketi";
+        if ($tip == 1) {       
+            $sql2 = "SELECT * FROM paketi p JOIN status s ON p.status=s.id_status WHERE id_donor IS NOT NULL AND id_potrebitog IS NULL AND  id_volonter IS NULL";
         } else {
             if ($tip == 2) {
-                print_r("tip 2");
-                $sql2 = "SELECT * FROM paketi p JOIN status s on p.status=s.id WHERE id_donor!=NULL AND id_potrebitog IS NOT NULL AND  id_volonter IS NULL";
+               
+                $sql2 = "SELECT * FROM paketi p JOIN status s on p.status=s.id_status WHERE id_donor IS NOT NULL AND id_potrebitog IS NOT NULL AND  id_volonter IS NULL";
             } else {
-                print_r("tip 3");
-                $sql2 = "SELECT * FROM paketi p JOIN status s on p.status=s.id WHERE id_donor IS NOT NULL AND id_potrebitog IS NULL"; //id potr i id volon
+                
+                $sql2 = "SELECT * FROM paketi p JOIN status s on p.status=s.id_status WHERE id_donor IS NOT NULL AND id_potrebitog IS NULL"; //id potr i id volon
             }
         }
         $rez = vrati_podatke($sql2);
+        $paketi=array();
         if ($rez->num_rows > 0) {
             while ($row = $rez->fetch_assoc()) {
-                //$tip = $row["tip"];
+                
                 $br_paketa++;
-                print_r($row);
-                print_r($br_paketa);
+                $id_paketa=$row["id"];
+                $sql3="SELECT * FROM stavka s JOIN stavka_paket sp ON s.id=sp.id_stavka WHERE sp.id_paket='$id_paketa'";              
+                $rez3 = vrati_podatke($sql3);             
+                $stavka = array();
+                if ($rez3->num_rows > 0) {
+                 while ($row3 = $rez3->fetch_assoc()) {               
+                      $pom2 = array('id' => $row3["id"], 'naziv' => $row3["naziv"],'kolicina' => $row3["kolicina"], 'jedinica' => $row3["jedinica"],'id_stavka' => $row3["id_stavka"],'id_paket' => $row3["id_paket"],'stanje' => $row3["stanje"]);                   
+                      array_push($stavka, $pom2);
+                 }
+                   
+               }
+               $paket=array('id'=> $row["id"],'preuzimanje'=> $row["preuzimanje"],'hitno'=> $row["hitno"],'id_volonter'=> $row["id_volonter"],'id_donor'=> $row["id_donor"],'id_potrebitog'=> $row["id_potrebitog"],'preuzimanje'=> $row["preuzimanje"],'v_kreiranja'=> $row["v_kreiranja"],'v_naruceno'=> $row["v_naruceno"],'v_naruceno'=> $row["v_naruceno"],'v_preuzeto'=> $row["v_preuzeto"],'v_slanja'=> $row["v_slanja"],'v_pristiglo'=> $row["v_pristiglo"],'stavke'=>$stavka);      
+               array_push($paketi, $paket);
             }
+            //print_r("paketi:");
+            //print_r($paketi);
         } else {
             $txt .= "Nema paketa za traženog korisnika";
         }
@@ -403,5 +415,7 @@ function dohvatiPakete($korisnik) {
 
     if ($txt != "") {
         deliver_response('NOT OK', 0, $txt, array('paketi' => "error"));
+    }else{
+        deliver_response("OK", $br_paketa, "Uspješno dohvaćanje", $paketi);
     }
 }
