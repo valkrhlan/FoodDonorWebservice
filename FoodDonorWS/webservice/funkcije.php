@@ -306,7 +306,7 @@ function dodaj_bazu_vrai_id($upit) {
 
 function dodajNoviPaket($korisnik, $json) {
     /*$tekst = "";
-    //print_r($json);
+    
     //echo "\n";
     $pom = substr($json, 1, strlen($json)-2);
    // print_r($pom);
