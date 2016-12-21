@@ -11,6 +11,10 @@ if (isset($_GET)) {
             registerDevice($email, $token);
             //echo "registerDevice";
         }
+        
+         if ($_GET["metoda"] == 'getAllTokens') {
+            getAllTokens();
+        }
     }
 }
 
@@ -29,4 +33,17 @@ function registerDevice($email, $token) {
         dodaj_u_bazu($sql2);
     }
     deliver_response('OK', 0, $txt , array('evidentiranje'=>'provedeno'));
+}
+
+function getAllTokens(){
+    $sql="SELECT * FROM tokeni";
+    $txt = "";
+    $rez = vrati_podatke($sql);
+    $tokens=array();
+    if ($rez->num_rows > 0) {
+        while ($row = $rez->fetch_assoc()) {
+            array_push($tokens, $row["token"]);
+        }
+    } 
+    return $tokens;
 }
