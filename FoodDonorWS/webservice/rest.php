@@ -2,6 +2,7 @@
 
 //putanja http://localhost/fooddonorwebservice/FoodDonorWebservice/php/rest.php
 include_once( 'funkcije.php');
+include_once( 'firebase.php');
 header("Content-Type:application/json");
 
 //echo "rest.php";
@@ -42,6 +43,12 @@ if (isset($_GET)) {
            dohvatiPakete($korisnik);
            
         }
+       /* if($_GET["metoda"] == 'registerDevice') {
+            $email=$_GET["email"];
+           $token=$_GET["token"];
+           registerDevice($email,$token);
+           echo "registerDevice";
+        }*/
     }
 }
 
