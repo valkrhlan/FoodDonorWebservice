@@ -17,18 +17,19 @@ if (isset($_GET)) {
         }
         
          if ($_GET["metoda"] == 'sendNotifications') {
-        //echo "tu\n";            
-            $tokeni=getAllTokens();
+        //echo "tu\n";       
+            
+            $upit=dohvatiUpit($_GET["email"]);
+            $tokeni=getAllTokens($upit);
+            
             if(empty($tokeni)){
                 //to do ak nema tokena
             }else{
                 //to do send notification
-                $title="Naslov";
-                $message="Tekst notifikacije";
                 $image=null;
                 $res=array();
-                $res['data']['title'] = $title;
-                $res['data']['message'] = $message;
+                $res['data']['title'] = $_GET["title"];
+                $res['data']['message'] = $_GET["message"];
                 $res['data']['image'] = $image;  
                 sendPushNotifications($res,$tokeni);
             }
@@ -53,8 +54,8 @@ function registerDevice($email, $token) {
     deliver_response('OK', 0, $txt , array('evidentiranje'=>'provedeno'));
 }
 
-function getAllTokens(){
-    $sql="SELECT * FROM tokeni";
+function getAllTokens($sql){
+    //$sql="SELECT * FROM tokeni WHERE email!='$email'";
     $txt = "";
     $rez = vrati_podatke($sql);
     $tokens=array();
@@ -102,6 +103,7 @@ function sendPushNotifications($rez,$tokeni){
         curl_close($ch);
  
         //and return the result 
+       // echo $result
         $vraceno= json_decode($result,true);
         if($vraceno["success"]==0){
             deliver_response("NOT OK", $vraceno["success"], "Nije poslana ni jedna notifikacija", array('notifikacija'=>'nema'));
@@ -109,4 +111,38 @@ function sendPushNotifications($rez,$tokeni){
             deliver_response("OK", $vraceno["success"], "Poslane notifikacije", array('notifikacija'=>'ima')); 
         }
         
+}
+
+function dohvatiUpit($email){
+    $sql="SELECT * FROM korisnik k LEFT JOIN detalji_pravna dp ON k.id=dp.id_korisnik WHERE email='$email'";
+    $rez = vrati_podatke($sql);
+    $naziv="";
+    $tip="";
+    if ($rez->num_rows > 0) {
+        while ($row = $rez->fetch_assoc()) {
+          $tip=$row["tip"];
+          if($tip==2){
+              $naziv=$row["ime"]." ".$row["prezime"];
+          }
+          else{
+              $naziv=$row["naziv"];
+          }
+        }
+    }
+    $pom= $_GET["message"];
+    $_GET["message"]=$naziv.": ".$pom;
+    if($tip=='1'){
+        $sql="SELECT * FROM tokeni t JOIN korisnik k ON t.email=k.email WHERE t.email!='email' AND k.tip!='1' OR k.tip!='2'"; //dela,testirano
+    }
+    else{
+        if($tip=='2'){
+                $sql="SELECT * FROM tokeni t JOIN korisnik k ON t.email=k.email WHERE t.email!='email' AND k.tip!='2'";
+        }
+        else{         
+                $sql="SELECT * FROM tokeni t JOIN korisnik k ON t.email=k.email WHERE t.email!='email' AND k.tip!='3' AND k.tip!='1'";         
+        }
+        
+    }
+  return $sql;
+
 }
