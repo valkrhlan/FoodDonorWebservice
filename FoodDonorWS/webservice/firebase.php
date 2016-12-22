@@ -3,7 +3,6 @@
 include_once("../klase/baza.php");
 include_once("funkcije.php");
 
-//$firebase_api_key="AAAA2bNVnkE:APA91bHaDF1WtZU-T2stHPwT3VsZtljvkGKWBiuhB_Rln49PysPnAtP6rSlVvMja4_zwer94nuc5EDD8SuZkc0yCwkPigfu7_SlaS2EMD8CGML3T4wMAUM_oPnSxZDyaAR23Y-jRzaDJz1O-G574Il_rne0zFfdjAA";
 header("Content-Type:application/json");
 define('FIREBASE_API_KEY', 'AAAA2bNVnkE:APA91bHaDF1WtZU-T2stHPwT3VsZtljvkGKWBiuhB_Rln49PysPnAtP6rSlVvMja4_zwer94nuc5EDD8SuZkc0yCwkPigfu7_SlaS2EMD8CGML3T4wMAUM_oPnSxZDyaAR23Y-jRzaDJz1O-G574Il_rne0zFfdjAA');
 if (isset($_GET)) {
@@ -35,6 +34,11 @@ if (isset($_GET)) {
             }
         }
     }
+    if ($_GET["metoda"] == 'obrisiToken') {
+            $email = $_GET["email"];
+            obrisiToken($email);
+         
+        }
 }
 
 function registerDevice($email, $token) {
@@ -53,6 +57,7 @@ function registerDevice($email, $token) {
     }
     deliver_response('OK', 0, $txt , array('evidentiranje'=>'provedeno'));
 }
+
 
 function getAllTokens($sql){
     //$sql="SELECT * FROM tokeni WHERE email!='$email'";
@@ -145,4 +150,14 @@ function dohvatiUpit($email){
     }
   return $sql;
 
+}
+
+function obrisiToken($email){
+    $db = new baza;
+    $db->spajanje();
+    $sql = "DELETE FROM tokeni WHERE email='$email'";
+    $db->izvrsiOstalo($sql);
+    $db->prekiniVezu();
+    deliver_response("OK", 0, "Obrisan token", array('token'=>'obrisan'));
+    
 }
