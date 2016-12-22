@@ -2,6 +2,10 @@
 
 include_once("../klase/baza.php");
 include_once("funkcije.php");
+
+//$firebase_api_key="AAAA2bNVnkE:APA91bHaDF1WtZU-T2stHPwT3VsZtljvkGKWBiuhB_Rln49PysPnAtP6rSlVvMja4_zwer94nuc5EDD8SuZkc0yCwkPigfu7_SlaS2EMD8CGML3T4wMAUM_oPnSxZDyaAR23Y-jRzaDJz1O-G574Il_rne0zFfdjAA";
+header("Content-Type:application/json");
+define('FIREBASE_API_KEY', 'AAAA2bNVnkE:APA91bHaDF1WtZU-T2stHPwT3VsZtljvkGKWBiuhB_Rln49PysPnAtP6rSlVvMja4_zwer94nuc5EDD8SuZkc0yCwkPigfu7_SlaS2EMD8CGML3T4wMAUM_oPnSxZDyaAR23Y-jRzaDJz1O-G574Il_rne0zFfdjAA');
 if (isset($_GET)) {
     if (!empty($_GET["metoda"])) {
 
@@ -12,8 +16,22 @@ if (isset($_GET)) {
             //echo "registerDevice";
         }
         
-         if ($_GET["metoda"] == 'getAllTokens') {
-            getAllTokens();
+         if ($_GET["metoda"] == 'sendNotifications') {
+        //echo "tu\n";            
+            $tokeni=getAllTokens();
+            if(empty($tokeni)){
+                //to do ak nema tokena
+            }else{
+                //to do send notification
+                $title="Naslov";
+                $message="Tekst notifikacije";
+                $image=null;
+                $res=array();
+                $res['data']['title'] = $title;
+                $res['data']['message'] = $message;
+                $res['data']['image'] = $image;  
+                sendPushNotifications($res,$tokeni);
+            }
         }
     }
 }
@@ -46,4 +64,49 @@ function getAllTokens(){
         }
     } 
     return $tokens;
+}
+
+function sendPushNotifications($rez,$tokeni){
+
+    $url=$url = 'https://fcm.googleapis.com/fcm/send';
+    $headers = array(
+            'Authorization: key=' . FIREBASE_API_KEY,
+            'Content-Type: application/json'
+        );
+       // print_r($headers) ;
+     $ch= curl_init();
+     curl_setopt($ch, CURLOPT_URL, $url);
+     curl_setopt($ch, CURLOPT_POST, true);
+ 
+        //adding headers 
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+ 
+        //disabling ssl support
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        
+        //adding the fields in json format 
+         $fields = array(
+            'registration_ids' => $tokeni,
+            'data' => $rez,
+        );
+          curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($fields));
+      
+        //finally executing the curl request 
+        $result = curl_exec($ch);
+        if ($result === FALSE) {
+            die('Curl failed: ' . curl_error($ch));
+        }
+ 
+        //Now close the connection
+        curl_close($ch);
+ 
+        //and return the result 
+        $vraceno= json_decode($result,true);
+        if($vraceno["success"]==0){
+            deliver_response("NOT OK", $vraceno["success"], "Nije poslana ni jedna notifikacija", array('notifikacija'=>'nema'));
+        }else{
+            deliver_response("OK", $vraceno["success"], "Poslane notifikacije", array('notifikacija'=>'ima')); 
+        }
+        
 }

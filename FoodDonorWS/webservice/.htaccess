@@ -10,7 +10,7 @@ RewriteRule ^paket/novi/(.*)/(.*)/$  rest.php?metoda=novi&korisnik=$1&json=$2 [n
 RewriteRule ^paket/dohvati/(.*)/$  rest.php?metoda=dohvati&korisnik=$1 [nc,qsa]
 RewriteRule ^vrstaJedinica/all/$   rest.php?view=vrsta_jedinica [nc,qsa]
 RewriteRule ^registerDevice/(.*)/(.*)/$   firebase.php?metoda=registerDevice&email=$1&token=$2 [nc,qsa]
-RewriteRule ^getTokens/all/$   rest.php?metoda=getAllTokens [nc,qsa]
+RewriteRule ^sendNotifications/all/$   firebase.php?metoda=sendNotifications [nc,qsa]
 RewriteRule ^([a-zA-Z]+)/(.*)/(.*)/$   rest.php?metoda=$1&email=$2&lozinka=$3 [nc,qsa]
 
 
