@@ -32,9 +32,10 @@ if (isset($_GET)) {
         if($_GET["metoda"] == 'novi') {
             $korisnik=$_GET["korisnik"];
             $json=$_GET["json"];
+            $prijevoz=$_GET["prijevoz"];
             //json decode treba još napraviti;
             
-           dodajNoviPaket($korisnik,$json);
+           dodajNoviPaket($korisnik,$json,$prijevoz);
            
         }
         if($_GET["metoda"] == 'dohvati') {

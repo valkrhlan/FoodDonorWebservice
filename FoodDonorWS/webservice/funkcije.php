@@ -304,7 +304,7 @@ function dodaj_bazu_vrai_id($upit) {
     //return $rez; 
 }
 
-function dodajNoviPaket($korisnik, $json) {
+function dodajNoviPaket($korisnik, $json,$prijevoz) {
     
     $tekst = "";
     $pom = substr($json, 1, strlen($json)-2);
@@ -323,7 +323,7 @@ function dodajNoviPaket($korisnik, $json) {
             $tekst .= "Greška pri spajanju na bazu";
             
         } else {
-            $sql3 = "INSERT INTO paketi(status,id_donor) values('$status','$donor')";
+            $sql3 = "INSERT INTO paketi(status,id_donor,preuzimanje) values('$status','$donor','$prijevoz')";
             // echo $sql3;
             $paket = dodaj_bazu_vrai_id($sql3);
             // echo $paket;
