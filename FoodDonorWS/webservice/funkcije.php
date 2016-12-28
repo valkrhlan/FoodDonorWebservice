@@ -317,7 +317,12 @@ function dodajNoviPaket($korisnik, $json,$prijevoz) {
         }
 
         $date = date("Y-m-d H:i:s");
-        $sql2 = "INSERT INTO status(v_kreiranja) VALUES('$date')";
+        if($prijevoz==1){
+              $sql2 = "INSERT INTO status(v_kreiranja,v_preuzeto) VALUES('$date','$date')";
+      
+        }else{
+            $sql2 = "INSERT INTO status(v_kreiranja) VALUES('$date')";     
+        }
         $status = dodaj_bazu_vrai_id($sql2);
         if ($status == -1) {
             $tekst .= "Greška pri spajanju na bazu";
