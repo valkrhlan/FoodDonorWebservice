@@ -399,15 +399,13 @@ function dohvatiPakete($korisnik) {
         $rez = vrati_podatke($sql2);
         $paketi = array();
         if ($rez->num_rows > 0) {
-            while ($row = $rez->fetch_assoc()) {
-
+            while ($row = $rez->fetch_array()) {
                 $br_paketa++;
-                $id_paketa = $row["id"];
+                $id_paketa = $row[0];
                 $sql3 = "SELECT s.id,s.naziv,s.kolicina,s.vrsta,v.naziv,s.jedinica,j.naziv FROM stavka s JOIN stavka_paket sp ON s.id=sp.id_stavka JOIN vrsta v on s.vrsta=v.id JOIN jedinica j ON s.jedinica=j.id WHERE sp.id_paket='$id_paketa'";
                 $rez3 = vrati_podatke($sql3);
                 $stavka = array();
                 if ($rez3->num_rows > 0) {
-
                     while ($row3 = $rez3->fetch_array()) {
                         // print_r($row3);
 
@@ -466,7 +464,7 @@ function dohvatiPakete($korisnik) {
     } else {
         $txt .= "Korisnik ne postoji u bazi";
     }
-    print_r($paketi);
+    //print_r($paketi);
 
     if ($txt != "") {
         deliver_response('NOT OK', 0, $txt, array('paketi' => "error"));
