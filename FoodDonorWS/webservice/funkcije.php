@@ -328,7 +328,12 @@ function dodajNoviPaket($korisnik, $json,$prijevoz) {
             $tekst .= "Greška pri spajanju na bazu";
             
         } else {
+            if($prijevoz==1){
+              $sql3 = "INSERT INTO paketi(status,id_donor,id_volonter,preuzimanje) values('$status','$donor','$donor','$prijevoz')";
+           
+        }else{
             $sql3 = "INSERT INTO paketi(status,id_donor,preuzimanje) values('$status','$donor','$prijevoz')";
+             }
             // echo $sql3;
             $paket = dodaj_bazu_vrai_id($sql3);
             // echo $paket;
@@ -414,6 +419,7 @@ function dohvatiPakete($korisnik) {
                  }
                    
                }
+              
                $paket=array('id'=> $row["id"],'preuzimanje'=> $row["preuzimanje"],'hitno'=> $row["hitno"],'id_volonter'=> $row["id_volonter"],'id_donor'=> $row["id_donor"],'id_potrebitog'=> $row["id_potrebitog"],'preuzimanje'=> $row["preuzimanje"],'v_kreiranja'=> $row["v_kreiranja"],'v_naruceno'=> $row["v_naruceno"],'v_naruceno'=> $row["v_naruceno"],'v_preuzeto'=> $row["v_preuzeto"],'v_slanja'=> $row["v_slanja"],'v_pristiglo'=> $row["v_pristiglo"],'stavke'=>$stavka);      
                array_push($paketi, $paket);
             }
@@ -424,6 +430,7 @@ function dohvatiPakete($korisnik) {
     } else {
         $txt .= "Korisnik ne postoji u bazi";
     }
+    print_r($paketi);
 
     if ($txt != "") {
         deliver_response('NOT OK', 0, $txt, array('paketi' => "error"));
