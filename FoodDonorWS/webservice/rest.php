@@ -3,11 +3,12 @@
 //putanja http://localhost/fooddonorwebservice/FoodDonorWebservice/php/rest.php
 include_once( 'funkcije.php');
 include_once( 'firebase.php');
+include_once ('konfigurabilno_notifikacije.php');
 header("Content-Type:application/json");
 
 //echo "rest.php";
 if (isset($_GET)) {
-   
+    //print_r($_GET);
     if (!empty($_GET["view"])) {
         if ($_GET["view"] == 'svi_gradovi') {
             sviGradovi();
@@ -33,9 +34,7 @@ if (isset($_GET)) {
             $korisnik=$_GET["korisnik"];
             $json=$_GET["json"];
             $prijevoz=$_GET["prijevoz"];
-            //json decode treba još napraviti;
-            
-           dodajNoviPaket($korisnik,$json,$prijevoz);
+            dodajNoviPaket($korisnik,$json,$prijevoz);
            
         }
         if($_GET["metoda"] == 'dohvati') {
@@ -44,7 +43,12 @@ if (isset($_GET)) {
            dohvatiPakete($korisnik);
            
         }
-      
+       if($_GET["metoda"] == 'getNotifications') {
+            $email=$_GET["email"];
+            $ts=$_GET["timestamp"];
+            dohvati_obavijesti($email,$ts);
+            
+        }
     }
 }
 

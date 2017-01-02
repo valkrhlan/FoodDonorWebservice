@@ -464,7 +464,7 @@ function dohvatiPakete($korisnik) {
     } else {
         $txt .= "Korisnik ne postoji u bazi";
     }
-    //print_r($paketi);
+    print_r($paketi);
 
     if ($txt != "") {
         deliver_response('NOT OK', 0, $txt, array('paketi' => "error"));
