@@ -479,3 +479,45 @@ function dohvatiPakete($korisnik, $odabrani) {
     
     
 }
+
+function odaberiPaketPotrebiti($email, $hitno, $idPaketa){
+    $date = date("Y-m-d H:i:s");
+    $txt = "";
+    $sql = "SELECT id FROM korisnik WHERE email='$email'";
+    $rez = vrati_podatke($sql);
+    $id_korisnika = -1;
+    if ($rez->num_rows > 0) {
+        $row = $rez->fetch_assoc();
+        $id_korisnika = $row["id"];
+    } else {
+        $txt .= "Nepostojeći korisnik.";
+    }
+    $sql = "SELECT status FROM paketi WHERE id=$idPaketa";
+    $rez = vrati_podatke($sql);
+    $status = -1;
+    if ($rez->num_rows > 0) {
+        $row = $rez->fetch_assoc();
+        $status = $row["status"];
+    } else {
+        $txt .= " Nepostojeći paket.";
+    }
+    if($hitno == 'ne'){
+        $sql = "UPDATE paketi SET id_potrebitog=$id_korisnika WHERE id=$idPaketa";
+    }else{
+        $sql = "UPDATE paketi SET id_potrebitog=$id_korisnika, hitno=1 WHERE id=$idPaketa";
+    }
+    
+    dodaj_u_bazu($sql);
+    $sql = "UPDATE status SET v_naruceno='$date' WHERE id_status=$status";
+    dodaj_u_bazu($sql);
+    if ($txt != "") {
+        deliver_response('NOT OK', 0, $txt, array('odabraniPaketi' => "error"));
+    } else {
+        if($hitno == 'ne'){
+            deliver_response("OK", 1, "Paket odabran!", array('odabraniPaketi' => "OK"));
+        }else{
+            deliver_response("OK", 1, "Poslan hitan signal!", array('odabraniPaketi' => "OK"));
+        }
+        
+    }
+}

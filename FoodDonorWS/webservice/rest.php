@@ -49,6 +49,14 @@ if (isset($_GET)) {
             dohvati_obavijesti($email,$ts);
             
         }
+		
+		if($_GET["metoda"] == 'odaberiPaketPotrebiti') {
+            $email=$_GET["email"];
+            $hitno=$_GET["hitno"];
+            $idPaketa=$_GET["idPaketa"];
+            odaberiPaketPotrebiti($email,$hitno,$idPaketa);
+            
+        }
     }
 }
 
