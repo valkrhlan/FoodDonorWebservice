@@ -370,31 +370,36 @@ function dodajNoviPaket($korisnik, $json, $prijevoz) {
     }
 }
 
-function dohvatiPakete($korisnik) {
+function dohvatiPakete($korisnik, $odabrani) {
     $txt = "";
 
-    $sql = "SELECT tip FROM korisnik WHERE email='$korisnik'";
+    $sql = "SELECT id,tip FROM korisnik WHERE email='$korisnik'";
     $rez = vrati_podatke($sql);
     $popis_paketa;
     $br_paketa = 0;
     if ($rez->num_rows > 0) {
         $tip = -1;
+        $id_korisnika = -1;
         while ($row = $rez->fetch_assoc()) {
             $tip = $row["tip"];
+            $id_korisnika = $row["id"];
         }
         //1 donor
         //2 volonter
         //3 potrebiti
+        
         if ($tip == 1) {
             $sql2 = "SELECT * FROM paketi p JOIN status s ON p.status=s.id_status JOIN korisnik k ON p.id_donor=k.id WHERE p.id_donor IS NOT NULL AND k.email='$korisnik' ";
-        } else {
-            if ($tip == 2) {
-
-                $sql2 = "SELECT * FROM paketi p JOIN status s on p.status=s.id_status WHERE id_donor IS NOT NULL AND id_potrebitog IS NOT NULL AND  id_volonter IS NULL";
-            } else {
-
-                $sql2 = "SELECT * FROM paketi p JOIN status s on p.status=s.id_status WHERE id_donor IS NOT NULL AND id_potrebitog IS NULL"; //id potr i id volon
-            }
+        }elseif ($tip == 2 && $odabrani == 'ne') {
+            $sql2 = "SELECT * FROM paketi p JOIN status s on p.status=s.id_status WHERE id_donor IS NOT NULL AND id_potrebitog IS NOT NULL AND  id_volonter IS NULL";
+        }elseif ($tip == 3 && $odabrani == 'ne') {
+            $sql2 = "SELECT * FROM paketi p JOIN status s on p.status=s.id_status WHERE id_donor IS NOT NULL AND id_potrebitog IS NULL AND id_volonter IS NULL"; //id potr i id volon
+        }
+        //-----------------------------------------------------------
+        //------------------- COKY 11.1.2017. -----------------------
+        //-----------------------------------------------------------
+        elseif($tip == 3 && $odabrani == 'da'){
+            $sql2 = "SELECT * FROM paketi p JOIN status s on p.status=s.id_status WHERE id_donor IS NOT NULL AND p.id_potrebitog=$id_korisnika";
         }
         $rez = vrati_podatke($sql2);
         $paketi = array();
@@ -455,7 +460,7 @@ function dohvatiPakete($korisnik) {
                         }
                     }
                 }
-                $paket = array('id' => $row["id"], 'preuzimanje' => $row["preuzimanje"], 'hitno' => $row["hitno"], 'id_volonter' => $row["id_volonter"], 'naziv_volonter' => $naziv_volontera, 'id_donor' => $row["id_donor"], 'naziv_donor' => $naziv_donora, 'id_potrebitog' => $row["id_potrebitog"], 'naziv_potrebitog' => $naziv_potrebitog, 'preuzimanje' => $row["preuzimanje"], 'v_kreiranja' => $row["v_kreiranja"], 'v_naruceno' => $row["v_naruceno"], 'v_naruceno' => $row["v_naruceno"], 'v_preuzeto' => $row["v_preuzeto"], 'v_slanja' => $row["v_slanja"], 'v_pristiglo' => $row["v_pristiglo"], 'stavke' => $stavka);
+                $paket = array('id' => $row["id"], 'preuzimanje' => $row["preuzimanje"], 'hitno' => $row["hitno"], 'id_volonter' => $row["id_volonter"], 'naziv_volonter' => $naziv_volontera, 'id_donor' => $row["id_donor"], 'naziv_donor' => $naziv_donora, 'id_potrebitog' => $row["id_potrebitog"], 'naziv_potrebitog' => $naziv_potrebitog, 'preuzimanje' => $row["preuzimanje"], 'v_kreiranja' => $row["v_kreiranja"], 'v_naruceno' => $row["v_naruceno"], 'v_naruceno' => $row["v_naruceno"], 'v_preuzeto' => $row["v_preuzeto"], 'v_slanja' => $row["v_slanja"], 'v_pristiglo' => $row["v_pristiglo"], 'stavke' => json_encode($stavka));
                 array_push($paketi, $paket);
             }
         } else {
@@ -464,11 +469,13 @@ function dohvatiPakete($korisnik) {
     } else {
         $txt .= "Korisnik ne postoji u bazi";
     }
-    print_r($paketi);
+    //print_r($paketi);
 
     if ($txt != "") {
         deliver_response('NOT OK', 0, $txt, array('paketi' => "error"));
     } else {
         deliver_response("OK", $br_paketa, "Uspješno dohvaćanje", $paketi);
     }
+    
+    
 }

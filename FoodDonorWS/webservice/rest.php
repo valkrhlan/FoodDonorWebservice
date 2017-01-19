@@ -39,8 +39,8 @@ if (isset($_GET)) {
         }
         if($_GET["metoda"] == 'dohvati') {
             $korisnik=$_GET["korisnik"];
-           
-           dohvatiPakete($korisnik);
+            $odabrani=$_GET["odabrani"];
+           dohvatiPakete($korisnik, $odabrani);
            
         }
        if($_GET["metoda"] == 'getNotifications') {
