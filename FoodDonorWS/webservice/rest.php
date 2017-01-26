@@ -39,14 +39,22 @@ if (isset($_GET)) {
         }
         if($_GET["metoda"] == 'dohvati') {
             $korisnik=$_GET["korisnik"];
-           
-           dohvatiPakete($korisnik);
+            $odabrani=$_GET["odabrani"];
+           dohvatiPakete($korisnik, $odabrani);
            
         }
        if($_GET["metoda"] == 'getNotifications') {
             $email=$_GET["email"];
             $ts=$_GET["timestamp"];
             dohvati_obavijesti($email,$ts);
+            
+        }
+		
+		if($_GET["metoda"] == 'odaberiPaketPotrebiti') {
+            $email=$_GET["email"];
+            $hitno=$_GET["hitno"];
+            $idPaketa=$_GET["idPaketa"];
+            odaberiPaketPotrebiti($email,$hitno,$idPaketa);
             
         }
     }
