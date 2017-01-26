@@ -137,14 +137,14 @@ function dohvatiUpit($email){
     $pom= $_GET["message"];
     $_GET["message"]=$naziv.": ".$pom;
     if($tip=='1'){
-        $sql="SELECT * FROM tokeni t JOIN korisnik k ON t.email=k.email WHERE t.email!='email' AND k.tip!='1' OR k.tip!='2'"; //dela,testirano
+        $sql="SELECT * FROM tokeni t JOIN korisnik k ON t.email=k.email WHERE k.tip='3'"; //dela,testirano
     }
     else{
         if($tip=='2'){
-                $sql="SELECT * FROM tokeni t JOIN korisnik k ON t.email=k.email WHERE t.email!='email' AND k.tip!='2'";
+                $sql="SELECT * FROM tokeni t JOIN korisnik k ON t.email=k.email WHERE  AND k.tip!='2'";
         }
         else{         
-                $sql="SELECT * FROM tokeni t JOIN korisnik k ON t.email=k.email WHERE t.email!='email' AND k.tip!='3' AND k.tip!='1'";         
+                $sql="SELECT * FROM tokeni t JOIN korisnik k ON t.email=k.email WHERE AND k.tip='2'";         
         }
         
     }

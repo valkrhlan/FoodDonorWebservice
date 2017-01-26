@@ -455,7 +455,7 @@ function dohvatiPakete($korisnik) {
                         }
                     }
                 }
-                $paket = array('id' => $row["id"], 'preuzimanje' => $row["preuzimanje"], 'hitno' => $row["hitno"], 'id_volonter' => $row["id_volonter"], 'naziv_volonter' => $naziv_volontera, 'id_donor' => $row["id_donor"], 'naziv_donor' => $naziv_donora, 'id_potrebitog' => $row["id_potrebitog"], 'naziv_potrebitog' => $naziv_potrebitog, 'preuzimanje' => $row["preuzimanje"], 'v_kreiranja' => $row["v_kreiranja"], 'v_naruceno' => $row["v_naruceno"], 'v_naruceno' => $row["v_naruceno"], 'v_preuzeto' => $row["v_preuzeto"], 'v_slanja' => $row["v_slanja"], 'v_pristiglo' => $row["v_pristiglo"], 'stavke' => $stavka);
+                $paket = array('id' => $row["id"], 'preuzimanje' => $row["preuzimanje"], 'hitno' => $row["hitno"], 'id_volonter' => $row["id_volonter"], 'naziv_volonter' => $naziv_volontera, 'id_donor' => $row["id_donor"], 'naziv_donor' => $naziv_donora, 'id_potrebitog' => $row["id_potrebitog"], 'naziv_potrebitog' => $naziv_potrebitog, 'preuzimanje' => $row["preuzimanje"], 'v_kreiranja' => $row["v_kreiranja"], 'v_naruceno' => $row["v_naruceno"], 'v_naruceno' => $row["v_naruceno"], 'v_preuzeto' => $row["v_preuzeto"], 'v_slanja' => $row["v_slanja"], 'v_pristiglo' => $row["v_pristiglo"], 'stavke' => json_encode($stavka));
                 array_push($paketi, $paket);
             }
         } else {
