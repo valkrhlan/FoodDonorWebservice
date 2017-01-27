@@ -14,6 +14,7 @@ RewriteRule ^obrisiToken/(.*)/$   firebase.php?metoda=obrisiToken&email=$1    [n
 RewriteRule ^sendNotifications/(.*)/(.*)/(.*)/$   firebase.php?metoda=sendNotifications&email=$1&title=$2&message=$3 [nc,qsa]
 RewriteRule ^getNotifications/(.*)/(.*)/$ rest.php?metoda=getNotifications&email=$1&timestamp=$2 [nc,qsa]
 RewriteRule ^odaberiPaketPotrebiti/(.*)/(.*)/(.*)/$  rest.php?metoda=odaberiPaketPotrebiti&email=$1&hitno=$2&idPaketa=$3  [nc,qsa]
+RewriteRule ^odaberiPaketVolonter/(.*)/(.*)/$  rest.php?metoda=odaberiPaketVolonter&email=$1&idPaketa=$2  [nc,qsa]
 RewriteRule ^([a-zA-Z]+)/(.*)/(.*)/$   rest.php?metoda=$1&email=$2&lozinka=$3 [nc,qsa]
 
 

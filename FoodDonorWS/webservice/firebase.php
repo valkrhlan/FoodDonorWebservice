@@ -23,6 +23,9 @@ if (isset($_GET)) {
             
             if(empty($tokeni)){
                 //to do ak nema tokena
+				//---------------------ČOKY---------12:20, 26.1.2017.---------------
+                deliver_response("NOT OK", 0, "Nije poslana ni jedna notifikacija", array('notifikacija'=>'nema'));
+                //------------------------------------------------------------------
             }else{
                 //to do send notification
                 $image=null;

@@ -400,6 +400,8 @@ function dohvatiPakete($korisnik, $odabrani) {
         //-----------------------------------------------------------
         elseif($tip == 3 && $odabrani == 'da'){
             $sql2 = "SELECT * FROM paketi p JOIN status s on p.status=s.id_status WHERE id_donor IS NOT NULL AND p.id_potrebitog=$id_korisnika";
+        }elseif($tip == 2 && $odabrani == 'da'){
+            $sql2 = "SELECT * FROM paketi p JOIN status s on p.status=s.id_status WHERE pristiglo IS NULL AND p.id_volonter=$id_korisnika";
         }
         $rez = vrati_podatke($sql2);
         $paketi = array();
@@ -519,5 +521,37 @@ function odaberiPaketPotrebiti($email, $hitno, $idPaketa){
             deliver_response("OK", 1, "Poslan hitan signal!", array('odabraniPaketi' => "OK"));
         }
         
+    }
+}
+
+function odaberiPaketVolonter($email, $idPaketa){
+    $date = date("Y-m-d H:i:s");
+    $txt = "";
+    $sql = "SELECT id FROM korisnik WHERE email='$email'";
+    $rez = vrati_podatke($sql);
+    $id_korisnika = -1;
+    if ($rez->num_rows > 0) {
+        $row = $rez->fetch_assoc();
+        $id_korisnika = $row["id"];
+    } else {
+        $txt .= "Nepostojeći korisnik.";
+    }
+    $sql = "SELECT status FROM paketi WHERE id=$idPaketa";
+    $rez = vrati_podatke($sql);
+    $status = -1;
+    if ($rez->num_rows > 0) {
+        $row = $rez->fetch_assoc();
+        $status = $row["status"];
+    } else {
+        $txt .= " Nepostojeći paket.";
+    }
+    $sql = "UPDATE paketi SET id_volonter=$id_korisnika WHERE id=$idPaketa";
+    dodaj_u_bazu($sql);
+    $sql = "UPDATE status SET v_preuzeto='$date' WHERE id_status=$status";
+    dodaj_u_bazu($sql);
+    if ($txt != "") {
+        deliver_response('NOT OK', 0, $txt, array('odabraniPaketi' => "error"));
+    } else {
+        deliver_response("OK", 1, "Paket odabran!", array('odabraniPaketi' => "OK"));
     }
 }

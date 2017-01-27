@@ -57,6 +57,12 @@ if (isset($_GET)) {
             odaberiPaketPotrebiti($email,$hitno,$idPaketa);
             
         }
+		
+		if($_GET["metoda"] == 'odaberiPaketVolonter') {
+            $email=$_GET["email"];
+            $idPaketa=$_GET["idPaketa"];
+            odaberiPaketVolonter($email,$idPaketa);
+        }
     }
 }
 
