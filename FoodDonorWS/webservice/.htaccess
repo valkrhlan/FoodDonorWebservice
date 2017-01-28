@@ -7,7 +7,7 @@ RewriteRule ^grad/all$   rest.php?view=svi_gradovi [nc,qsa]
 RewriteRule ^registracija/([a-zA-Z]+)/(.*)/(.*)/([0-9]+)/(.*)/(.*)/([a-zA-Z0-9]+)/(.*)/(.*)/$ rest.php?metoda=$1&email=$2&lozinka=$3&oib=$4&grad=$5&adresa=$6&kontakt=$7&ime=$8&prezime=$9 [nc,qsa]
 RewriteRule ^registracijaOstali/([a-zA-Z]+)/(.*)/(.*)/([0-9]+)/(.*)/(.*)/([a-zA-Z0-9]+)/(.*)/([a-zA-Z]+)/$ rest.php?metoda=$1&email=$2&lozinka=$3&oib=$4&grad=$5&adresa=$6&kontakt=$7&naziv=$8&tip=$9 [nc,qsa]
 RewriteRule ^paket/novi/(.*)/(.*)/([0-9]+)/$  rest.php?metoda=novi&korisnik=$1&json=$2&prijevoz=$3 [nc,qsa]
-RewriteRule ^paket/dohvati/(.*)/(.*)/$  rest.php?metoda=dohvati&korisnik=$1&odabrani=$2 [nc,qsa]
+RewriteRule ^paket/dohvati/(.*)/(.*)/(.*)/$  rest.php?metoda=dohvati&korisnik=$1&odabrani=$2&grad=$3 [nc,qsa]
 RewriteRule ^vrstaJedinica/all/$   rest.php?view=vrsta_jedinica [nc,qsa]
 RewriteRule ^registerDevice/(.*)/(.*)/$   firebase.php?metoda=registerDevice&email=$1&token=$2 [nc,qsa]
 RewriteRule ^obrisiToken/(.*)/$   firebase.php?metoda=obrisiToken&email=$1    [nc,qsa]
@@ -17,5 +17,7 @@ RewriteRule ^odaberiPaketPotrebiti/(.*)/(.*)/(.*)/$  rest.php?metoda=odaberiPake
 RewriteRule ^odaberiPaketVolonter/(.*)/(.*)/$  rest.php?metoda=odaberiPaketVolonter&email=$1&idPaketa=$2  [nc,qsa]
 RewriteRule ^evidentirajDolazak/(.*)/$  rest.php?metoda=evidentirajDolazak&idPaketa=$1  [nc,qsa]
 RewriteRule ^([a-zA-Z]+)/(.*)/(.*)/$   rest.php?metoda=$1&email=$2&lozinka=$3 [nc,qsa]
+
+
 
 

@@ -32,7 +32,7 @@ function deliver_response($status, $nbr, $message, $data) {
 }
 
 function sviGradovi() {
-    $sql = "SELECT * FROM gradovi1";
+    $sql = "SELECT * FROM gradovi1 ORDER BY naziv";
     $rez = vrati_podatke($sql);
     $nbr = 0;
     $gradovi = array();
@@ -370,7 +370,7 @@ function dodajNoviPaket($korisnik, $json, $prijevoz) {
     }
 }
 
-function dohvatiPakete($korisnik, $odabrani) {
+function dohvatiPakete($korisnik, $odabrani, $grad) {
     $txt = "";
 
     $sql = "SELECT id,tip FROM korisnik WHERE email='$korisnik'";
@@ -384,29 +384,42 @@ function dohvatiPakete($korisnik, $odabrani) {
             $tip = $row["tip"];
             $id_korisnika = $row["id"];
         }
+
         //1 donor
         //2 volonter
         //3 potrebiti
-        
+        $donoriOdredjenogGrada = array();
         if ($tip == 1) {
             $sql2 = "SELECT * FROM paketi p JOIN status s ON p.status=s.id_status JOIN korisnik k ON p.id_donor=k.id WHERE pristiglo IS NULL AND p.id_donor IS NOT NULL AND k.email='$korisnik' ";
-        }elseif ($tip == 2 && $odabrani == 'ne') {
+        } elseif ($tip == 2 && $odabrani == 'ne') {
             $sql2 = "SELECT * FROM paketi p JOIN status s on p.status=s.id_status WHERE pristiglo IS NULL AND id_donor IS NOT NULL AND id_potrebitog IS NOT NULL AND  id_volonter IS NULL";
-        }elseif ($tip == 3 && $odabrani == 'ne') {
+            $sql2b = "SELECT id FROM korisnik WHERE grad='$grad'";
+            $rez = vrati_podatke($sql2b);
+            if ($rez - num_rows > 0) {
+                while ($row = $rez->fetch_assoc()) {
+                    array_push($donoriOdredjenogGrada, $row["id"]);
+                }
+            }
+        } elseif ($tip == 3 && $odabrani == 'ne') {
             $sql2 = "SELECT * FROM paketi p JOIN status s on p.status=s.id_status WHERE pristiglo IS NULL AND id_donor IS NOT NULL AND id_potrebitog IS NULL AND id_volonter IS NULL"; //id potr i id volon
         }
         //-----------------------------------------------------------
         //------------------- COKY 11.1.2017. -----------------------
         //-----------------------------------------------------------
-        elseif($tip == 3 && $odabrani == 'da'){
+        elseif ($tip == 3 && $odabrani == 'da') {
             $sql2 = "SELECT * FROM paketi p JOIN status s on p.status=s.id_status WHERE pristiglo IS NULL AND id_donor IS NOT NULL AND p.id_potrebitog=$id_korisnika";
-        }elseif($tip == 2 && $odabrani == 'da'){
+        } elseif ($tip == 2 && $odabrani == 'da') {
             $sql2 = "SELECT * FROM paketi p JOIN status s on p.status=s.id_status WHERE pristiglo IS NULL AND p.id_volonter=$id_korisnika";
         }
         $rez = vrati_podatke($sql2);
         $paketi = array();
         if ($rez->num_rows > 0) {
             while ($row = $rez->fetch_array()) {
+                if($tip == 2 && $odabrani == 'ne'){
+                    if(in_array($row["id_donor"], $donoriOdredjenogGrada) == FALSE){
+                        continue;
+                    }
+                }
                 $br_paketa++;
                 $id_paketa = $row[0];
                 $sql3 = "SELECT s.id,s.naziv,s.kolicina,s.vrsta,v.naziv,s.jedinica,j.naziv FROM stavka s JOIN stavka_paket sp ON s.id=sp.id_stavka JOIN vrsta v on s.vrsta=v.id JOIN jedinica j ON s.jedinica=j.id WHERE sp.id_paket='$id_paketa'";
@@ -443,10 +456,10 @@ function dohvatiPakete($korisnik, $odabrani) {
                         $rez4 = vrati_podatke($sql4);
                         if ($rez4->num_rows > 0) {
                             while ($row4 = $rez4->fetch_array()) {
-                                if($row4["naziv"]!=NULL){
-                                    $naziv_volontera=$row4["naziv"];
-                                }else{
-                                    $naziv_volontera=$row4["ime"]." ".$row4["prezime"];
+                                if ($row4["naziv"] != NULL) {
+                                    $naziv_volontera = $row4["naziv"];
+                                } else {
+                                    $naziv_volontera = $row4["ime"] . " " . $row4["prezime"];
                                 }
                             }
                         }
@@ -478,11 +491,9 @@ function dohvatiPakete($korisnik, $odabrani) {
     } else {
         deliver_response("OK", $br_paketa, "Uspješno dohvaćanje", $paketi);
     }
-    
-    
 }
 
-function odaberiPaketPotrebiti($email, $hitno, $idPaketa){
+function odaberiPaketPotrebiti($email, $hitno, $idPaketa) {
     $date = date("Y-m-d H:i:s");
     $txt = "";
     $sql = "SELECT id FROM korisnik WHERE email='$email'";
@@ -503,28 +514,27 @@ function odaberiPaketPotrebiti($email, $hitno, $idPaketa){
     } else {
         $txt .= " Nepostojeći paket.";
     }
-    if($hitno == 'ne'){
+    if ($hitno == 'ne') {
         $sql = "UPDATE paketi SET id_potrebitog=$id_korisnika WHERE id=$idPaketa";
-    }else{
+    } else {
         $sql = "UPDATE paketi SET id_potrebitog=$id_korisnika, hitno=1 WHERE id=$idPaketa";
     }
-    
+
     dodaj_u_bazu($sql);
     $sql = "UPDATE status SET v_naruceno='$date' WHERE id_status=$status";
     dodaj_u_bazu($sql);
     if ($txt != "") {
         deliver_response('NOT OK', 0, $txt, array('odabraniPaketi' => "error"));
     } else {
-        if($hitno == 'ne'){
+        if ($hitno == 'ne') {
             deliver_response("OK", 1, "Paket odabran!", array('odabraniPaketi' => "OK"));
-        }else{
+        } else {
             deliver_response("OK", 1, "Poslan hitan signal!", array('odabraniPaketi' => "OK"));
         }
-        
     }
 }
 
-function odaberiPaketVolonter($email, $idPaketa){
+function odaberiPaketVolonter($email, $idPaketa) {
     $date = date("Y-m-d H:i:s");
     $txt = "";
     $sql = "SELECT id FROM korisnik WHERE email='$email'";
@@ -556,7 +566,7 @@ function odaberiPaketVolonter($email, $idPaketa){
     }
 }
 
-function evidentirajDolazak($idPaketa){
+function evidentirajDolazak($idPaketa) {
     $date = date("Y-m-d H:i:s");
     $txt = "";
     $sql = "SELECT status FROM paketi WHERE id=$idPaketa";
