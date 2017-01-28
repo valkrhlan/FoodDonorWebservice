@@ -389,17 +389,17 @@ function dohvatiPakete($korisnik, $odabrani) {
         //3 potrebiti
         
         if ($tip == 1) {
-            $sql2 = "SELECT * FROM paketi p JOIN status s ON p.status=s.id_status JOIN korisnik k ON p.id_donor=k.id WHERE p.id_donor IS NOT NULL AND k.email='$korisnik' ";
+            $sql2 = "SELECT * FROM paketi p JOIN status s ON p.status=s.id_status JOIN korisnik k ON p.id_donor=k.id WHERE pristiglo IS NULL AND p.id_donor IS NOT NULL AND k.email='$korisnik' ";
         }elseif ($tip == 2 && $odabrani == 'ne') {
-            $sql2 = "SELECT * FROM paketi p JOIN status s on p.status=s.id_status WHERE id_donor IS NOT NULL AND id_potrebitog IS NOT NULL AND  id_volonter IS NULL";
+            $sql2 = "SELECT * FROM paketi p JOIN status s on p.status=s.id_status WHERE pristiglo IS NULL AND id_donor IS NOT NULL AND id_potrebitog IS NOT NULL AND  id_volonter IS NULL";
         }elseif ($tip == 3 && $odabrani == 'ne') {
-            $sql2 = "SELECT * FROM paketi p JOIN status s on p.status=s.id_status WHERE id_donor IS NOT NULL AND id_potrebitog IS NULL AND id_volonter IS NULL"; //id potr i id volon
+            $sql2 = "SELECT * FROM paketi p JOIN status s on p.status=s.id_status WHERE pristiglo IS NULL AND id_donor IS NOT NULL AND id_potrebitog IS NULL AND id_volonter IS NULL"; //id potr i id volon
         }
         //-----------------------------------------------------------
         //------------------- COKY 11.1.2017. -----------------------
         //-----------------------------------------------------------
         elseif($tip == 3 && $odabrani == 'da'){
-            $sql2 = "SELECT * FROM paketi p JOIN status s on p.status=s.id_status WHERE id_donor IS NOT NULL AND p.id_potrebitog=$id_korisnika";
+            $sql2 = "SELECT * FROM paketi p JOIN status s on p.status=s.id_status WHERE pristiglo IS NULL AND id_donor IS NOT NULL AND p.id_potrebitog=$id_korisnika";
         }elseif($tip == 2 && $odabrani == 'da'){
             $sql2 = "SELECT * FROM paketi p JOIN status s on p.status=s.id_status WHERE pristiglo IS NULL AND p.id_volonter=$id_korisnika";
         }
@@ -462,7 +462,7 @@ function dohvatiPakete($korisnik, $odabrani) {
                         }
                     }
                 }
-				$paket = array('id' => $row["id"], 'preuzimanje' => $row["preuzimanje"], 'hitno' => $row["hitno"], 'id_volonter' => $row["id_volonter"], 'naziv_volonter' => $naziv_volontera, 'id_donor' => $row["id_donor"], 'naziv_donor' => $naziv_donora, 'id_potrebitog' => $row["id_potrebitog"], 'naziv_potrebitog' => $naziv_potrebitog, 'v_kreiranja' => $row["v_kreiranja"], 'v_naruceno' => $row["v_naruceno"], 'v_preuzeto' => $row["v_preuzeto"], 'v_slanja' => $row["v_slanja"], 'v_pristiglo' => $row["v_pristiglo"], 'stavke' => json_encode($stavka));
+                $paket = array('id' => $row["id"], 'preuzimanje' => $row["preuzimanje"], 'hitno' => $row["hitno"], 'id_volonter' => $row["id_volonter"], 'naziv_volonter' => $naziv_volontera, 'id_donor' => $row["id_donor"], 'naziv_donor' => $naziv_donora, 'id_potrebitog' => $row["id_potrebitog"], 'naziv_potrebitog' => $naziv_potrebitog, 'v_kreiranja' => $row["v_kreiranja"], 'v_naruceno' => $row["v_naruceno"], 'v_preuzeto' => $row["v_preuzeto"], 'v_slanja' => $row["v_slanja"], 'v_pristiglo' => $row["v_pristiglo"], 'stavke' => json_encode($stavka));
                 array_push($paketi, $paket);
             }
         } else {
@@ -553,5 +553,28 @@ function odaberiPaketVolonter($email, $idPaketa){
         deliver_response('NOT OK', 0, $txt, array('odabraniPaketi' => "error"));
     } else {
         deliver_response("OK", 1, "Paket odabran!", array('odabraniPaketi' => "OK"));
+    }
+}
+
+function evidentirajDolazak($idPaketa){
+    $date = date("Y-m-d H:i:s");
+    $txt = "";
+    $sql = "SELECT status FROM paketi WHERE id=$idPaketa";
+    $rez = vrati_podatke($sql);
+    $status = -1;
+    if ($rez->num_rows > 0) {
+        $row = $rez->fetch_assoc();
+        $status = $row["status"];
+    } else {
+        $txt .= " Nepostojeći paket.";
+    }
+    $sql = "UPDATE paketi SET pristiglo=1 WHERE id=$idPaketa";
+    dodaj_u_bazu($sql);
+    $sql = "UPDATE status SET v_pristiglo='$date' WHERE id_status=$status";
+    dodaj_u_bazu($sql);
+    if ($txt != "") {
+        deliver_response('NOT OK', 0, $txt, array('evidentiranDolazak' => "error"));
+    } else {
+        deliver_response("OK", 1, "Evidentirano!", array('evidentiranDolazak' => "OK"));
     }
 }

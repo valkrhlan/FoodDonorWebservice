@@ -49,19 +49,24 @@ if (isset($_GET)) {
             dohvati_obavijesti($email,$ts);
             
         }
-		
-		if($_GET["metoda"] == 'odaberiPaketPotrebiti') {
+       
+        if($_GET["metoda"] == 'odaberiPaketPotrebiti') {
             $email=$_GET["email"];
             $hitno=$_GET["hitno"];
             $idPaketa=$_GET["idPaketa"];
             odaberiPaketPotrebiti($email,$hitno,$idPaketa);
             
         }
-		
-		if($_GET["metoda"] == 'odaberiPaketVolonter') {
+        
+        if($_GET["metoda"] == 'odaberiPaketVolonter') {
             $email=$_GET["email"];
             $idPaketa=$_GET["idPaketa"];
             odaberiPaketVolonter($email,$idPaketa);
+        }
+        
+        if($_GET["metoda"] == 'evidentirajDolazak'){
+            $idPaketa=$_GET["idPaketa"];
+            evidentirajDolazak($idPaketa);
         }
     }
 }
