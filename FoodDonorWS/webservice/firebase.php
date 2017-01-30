@@ -109,9 +109,7 @@ function sendPushNotifications($rez,$tokeni){
  
         //Now close the connection
         curl_close($ch);
- 
-        //and return the result 
-       // echo $result
+
         $vraceno= json_decode($result,true);
         if($vraceno["success"]==0){
             deliver_response("NOT OK", $vraceno["success"], "Nije poslana ni jedna notifikacija", array('notifikacija'=>'nema'));
@@ -139,15 +137,20 @@ function dohvatiUpit($email){
     }
     $pom= $_GET["message"];
     $_GET["message"]=$naziv.": ".$pom;
+    
+        //1 donor -> kad kreira spremi se v_kreiranja
+        //2 volonter -> kad kreira spremi se v_preuzeto
+        //3 potrebiti -> kad odabere spremi se v_naručeno
+    
     if($tip=='1'){
         $sql="SELECT * FROM tokeni t JOIN korisnik k ON t.email=k.email WHERE k.tip='3'"; //dela,testirano
     }
     else{
         if($tip=='2'){
-                $sql="SELECT * FROM tokeni t JOIN korisnik k ON t.email=k.email WHERE  AND k.tip!='2'";
+                $sql="SELECT * FROM tokeni t JOIN korisnik k ON t.email=k.email WHERE k.tip!='2'";
         }
         else{         
-                $sql="SELECT * FROM tokeni t JOIN korisnik k ON t.email=k.email WHERE AND k.tip='2'";         
+                $sql="SELECT * FROM tokeni t JOIN korisnik k ON t.email=k.email WHERE k.tip='2'";         
         }
         
     }
