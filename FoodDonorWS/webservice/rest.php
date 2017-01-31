@@ -69,6 +69,11 @@ if (isset($_GET)) {
             $idPaketa=$_GET["idPaketa"];
             evidentirajDolazak($idPaketa);
         }
+        
+        if($_GET["metoda"] == 'preuzmiKoordinate'){
+            $idPaketa=$_GET["idPaketa"];
+            preuzmiKoordinate($idPaketa);
+        }
     }
 }
 

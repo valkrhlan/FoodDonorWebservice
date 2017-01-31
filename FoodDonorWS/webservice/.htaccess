@@ -16,8 +16,7 @@ RewriteRule ^getNotifications/(.*)/(.*)/$ rest.php?metoda=getNotifications&email
 RewriteRule ^odaberiPaketPotrebiti/(.*)/(.*)/(.*)/$  rest.php?metoda=odaberiPaketPotrebiti&email=$1&hitno=$2&idPaketa=$3  [nc,qsa]
 RewriteRule ^odaberiPaketVolonter/(.*)/(.*)/$  rest.php?metoda=odaberiPaketVolonter&email=$1&idPaketa=$2  [nc,qsa]
 RewriteRule ^evidentirajDolazak/(.*)/$  rest.php?metoda=evidentirajDolazak&idPaketa=$1  [nc,qsa]
+RewriteRule ^preuzmiKoordinate/(.*)/$  rest.php?metoda=preuzmiKoordinate&idPaketa=$1  [nc,qsa]
 RewriteRule ^([a-zA-Z]+)/(.*)/(.*)/$   rest.php?metoda=$1&email=$2&lozinka=$3 [nc,qsa]
-
-
 
 

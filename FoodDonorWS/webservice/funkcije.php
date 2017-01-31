@@ -415,8 +415,8 @@ function dohvatiPakete($korisnik, $odabrani, $grad) {
         $paketi = array();
         if ($rez->num_rows > 0) {
             while ($row = $rez->fetch_array()) {
-                if($tip == 2 && $odabrani == 'ne'){
-                    if(in_array($row["id_donor"], $donoriOdredjenogGrada) == FALSE){
+                if ($tip == 2 && $odabrani == 'ne') {
+                    if (in_array($row["id_donor"], $donoriOdredjenogGrada) == FALSE) {
                         continue;
                     }
                 }
@@ -587,4 +587,49 @@ function evidentirajDolazak($idPaketa) {
     } else {
         deliver_response("OK", 1, "Evidentirano!", array('evidentiranDolazak' => "OK"));
     }
+}
+
+function preuzmiKoordinate($idPaketa) {
+    $txt = "";
+    $sql = "SELECT id_donor, id_potrebitog FROM paketi WHERE id=$idPaketa";
+    $rez = vrati_podatke($sql);
+    $id_donor = -1;
+    $id_potrebitog = -1;
+    if ($rez->num_rows > 0) {
+        $row = $rez->fetch_assoc();
+        $id_donor = $row["id_donor"];
+        $id_potrebitog = $row["id_potrebitog"];
+    } else {
+        $txt .= " Nepostojeći paket.";
+    }
+    $sql = "SELECT adresa FROM korisnik WHERE id=$id_donor";
+    $rez = vrati_podatke($sql);
+    $row = $rez->fetch_assoc();
+    $donor_adresa = $row["adresa"];
+    $sql = "SELECT adresa FROM korisnik WHERE id=$id_potrebitog";
+    $rez = vrati_podatke($sql);
+    $row = $rez->fetch_assoc();
+    $potrebiti_adresa = $row["adresa"];
+    $koordinate_donor = dohvatiKoordinate($donor_adresa);
+    $koordinate_potrebiti = dohvatiKoordinate($potrebiti_adresa);
+    $koordinate = array('lat_donor' => $koordinate_donor[0], 'lng_donor' => $koordinate_donor[1], 'lat_potrebiti' => $koordinate_potrebiti[0], 'lng_potrebiti' => $koordinate_potrebiti[1]);
+    if ($txt != "") {
+        deliver_response('NOT OK', 0, $txt, array('preuzmiKoordinate' => "error"));
+    } else {
+        deliver_response("OK", 1, "Koordinate dohvaćene!", $koordinate);
+    }
+    
+}
+
+function dohvatiKoordinate($adresa){
+   $adresa_uredjena = str_replace (" ", "+", $adresa);
+   $url = "http://maps.googleapis.com/maps/api/geocode/json?address=" . $adresa_uredjena . "&sensor=false";
+   $ch = curl_init();
+   curl_setopt($ch, CURLOPT_URL, $url);
+   curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+   $geoloc = json_decode(curl_exec($ch), true);
+   $koordinate = array();
+   array_push($koordinate, $geoloc['results'][0]['geometry']['location']['lat']);
+   array_push($koordinate, $geoloc['results'][0]['geometry']['location']['lng']);
+   return $koordinate;
 }
