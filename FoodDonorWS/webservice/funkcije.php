@@ -602,14 +602,18 @@ function preuzmiKoordinate($idPaketa) {
     } else {
         $txt .= " Nepostojeći paket.";
     }
-    $sql = "SELECT adresa FROM korisnik WHERE id=$id_donor";
+    $sql = "SELECT adresa,grad FROM korisnik WHERE id=$id_donor";
     $rez = vrati_podatke($sql);
     $row = $rez->fetch_assoc();
-    $donor_adresa = $row["adresa"];
-    $sql = "SELECT adresa FROM korisnik WHERE id=$id_potrebitog";
+    $donor_ulica = $row["adresa"];
+    $donor_grad = $row["grad"];
+    $donor_adresa = $donor_ulica . " " . $donor_grad;
+    $sql = "SELECT adresa,grad FROM korisnik WHERE id=$id_potrebitog";
     $rez = vrati_podatke($sql);
     $row = $rez->fetch_assoc();
-    $potrebiti_adresa = $row["adresa"];
+    $potrebiti_ulica = $row["adresa"];
+    $potrebiti_grad = $row["grad"];
+    $potrebiti_adresa = $potrebiti_ulica . " " . $potrebiti_grad;
     $koordinate_donor = dohvatiKoordinate($donor_adresa);
     $koordinate_potrebiti = dohvatiKoordinate($potrebiti_adresa);
     $koordinate = array('lat_donor' => $koordinate_donor[0], 'lng_donor' => $koordinate_donor[1], 'lat_potrebiti' => $koordinate_potrebiti[0], 'lng_potrebiti' => $koordinate_potrebiti[1]);
